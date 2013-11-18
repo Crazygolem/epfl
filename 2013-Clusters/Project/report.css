@@ -1,0 +1,6 @@
+table { border-collapse: collapse; border-spacing: 0; margin: auto; min-width: 20%; }
+tr { border-bottom: solid 1px; }
+tr:last-child { border-bottom: solid 2px; }
+th:nth-child(even), td:nth-child(even) { background-color: #fafafa; }
+th { padding: 0 0.5em; }
+td { padding: 0 5px; vertical-align: top; }

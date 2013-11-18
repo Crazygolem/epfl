@@ -36,6 +36,8 @@ The master process computes the primes up to $\sqrt{L}$. Every time it finds a p
 
 The slaves are each responsible of a different chunk of the candidate primes. When a slave receives a prime from the master, it marks all the multiples of that prime in its chunk. When it receives the FIN message, the slave collects all unmarked numbers (i.e. all primes) in its chunk and sends them back to the master.
 
+It must be noted that the master is actually doing a sieving with an upper limit of $\sqrt{L}$, which means that it can stop the sieving after reaching $\sqrt[4]{L}$.
+
 #### Discussing the strategy ####
 This strategy is very simple and still might achieve good results by letting the master process handle a small portion of the list while allowing to parallelize the processing of the big portion.
 
@@ -44,22 +46,33 @@ This technique scales very well for the portion of the list greater than $\sqrt{
 Another downside of this strategy is the memory limitation: If there are not enough slaves to hold the entire second portion of the list, the algorithm won't work as-is. Caching the primes sent by the master might be a way to overcome the limitation, however the benefits of the on-the-fly sieving (sieving a chunk while the master continuously sends new primes) would not be applicable for all chunks after the first one slaves process.
 
 ##### Computational complexity #####
-Let $k$ be the number of primes up to $\sqrt{L}$. The prime counting function[^primeCountingFunction] $\pi(n)$ gives the number of primes up to $n$, so we have the relation $k = \pi(L)$. Let's say that $\sqrt{L} = \pi^{-1}(k)$ and stick with $k$ for now.
+Let $k$ be the number of primes up to $\sqrt{L}$. The prime counting function[^primeCountingFunction] $\pi(n)$ gives the number of primes up to $n$, so we have the relation $k = \pi(L)$.
 
-* Each slave will be handling a chunk of size $S = L/p$, and therefore will be performing $k$ loops over $S$ elements. So the parallel computation time is $k * (L / p)$.
-* The master will send $k * p$ messages (broadcasting the primes) and receive $p$ messages (the primes found by the slaves), amounting to a total of $p(k+1)$ messages.
+* Each slave will be handling a chunk of size $S = L/p$, and therefore will be performing $k$ loops over $S$ elements. So the parallel computation time is $k(L / p)$.
+* The master will send $kp$ messages (broadcasting the primes) and receive $p$ messages (the primes found by the slaves), amounting to a total of $p(k+1)$ messages.
 * Computation/Communication ratio: $\frac{kL}{(k+1)p^2} = O(L)$.
 
 The longer the list of candidate primes, the smaller the impact of communications.
 
 ##### DPS flow graph #####
-TODO
+![DPS Flow graph for the first strategy](dps-flow_strat1.png)
+
+![](dps-flow_data-s.png) A dummy object signaling to the `Split` process it can start processing.
+![](dps-flow_data-1.png) Contains a list of primes and optionally the *FIN* signal.
+![](dps-flow_data-2.png) Contains an *ACK* signal and optionally a list of primes.
+![](dps-flow_data-f.png) A dummy object signaling the end of the sieve.
+
+As DPS requires that each message sent through the `Split` generates a message received by the `Merge` (TODO: Verify claim), the slave processes must send an acknowledgment message to the merge even if they are not able to send the list of primes in their chunk yet.
+
+When the master sends the last prime to the slaves, it signals that there are no more primes coming by setting the *FIN* flag. When slaves have done processing their chunk with the last primes, they send the *ACK* message with a list of all the primes they found.
+
+The master does the sieving up to $\sqrt{L}$ in the `Split` operation and collects the primes from the slaves in the `Merge`.
 
 
 ### Second strategy: Incremental sieve ###
 This strategy leads to a parallel incremental sieve, where each process is responsible for a chunk of the whole list (which might then theoretically be infinite).
 
-The strategy involves a turn-based approach, where at step $i$ the process responsible of the $i$-th chunk **finishes** that chunk, i.e. it finds all remaining primes in it (by using locally a sieving algorithm).
+The strategy involves a turn-based approach, where at step $i$ the process responsible of the $i$-th chunk **finishes** that chunk, i.e. it finds all remaining primes in it.
 
 At step $i$ process with *pid* $i$ performs the finishing sieve on its chunk then broadcasts the newly found primes to all other processes, which perform the sieve on their own chunk using the broadcast primes. Then at step $i+1$, process $i+1$ finishes its own chunk. Again, it broadcasts the newly found primes and all other processes perform the sieve on their own chunk with the primes found by process $i+1$. And so on...
 
@@ -87,7 +100,11 @@ Finally, it can be noted that this design allows for the *Sieve III* stage to ta
 However, since the pipeline is only conceptual, it is possible to relax the *Sieve III* stage by merging it with *Update* and *Sieve I* while buffering incoming broadcasts.
 
 #### Discussing the strategy ####
-TODO
+This strategy is more involved than the first one and requires that processes are synchronized in order to implement the pipelined setting as described above. Hopefully, the synchronization is easily done using the communication stages *Update* and *Broadcast*.
+
+The clear advantage of this strategy over the first one is that it allows to parallelize every part of the sieve, including the serial part of the first strategy. As side effect, the strategy also allows to continue as long as the available memory and the implementation allow to represent numbers the application has to deal with.
+
+On the communication side, the number of communications is comparable to that of the first strategy in terms of number of primes that are communicated, and even less if we count the number of messages: unlike the first strategy, where the master sends a message for at least each prime up to $\sqrt[4]{L}$, in this strategy a message is sent only once for each finished chunk.
 
 
 Detailed theoretical analysis
