@@ -1,4 +1,5 @@
-body { text-align: justify; }
+body { text-align: justify; font-family: "Droid Serif", "DejaVu Serif", serif;}
+h1, h2, h3, h4, h5, h6 { text-align: left; }
 code { border: none; }
 .footnote { font-size: small; }
 
@@ -12,5 +13,11 @@ td { padding: 0 5px; vertical-align: top; }
 
 /* Only when printing */
 @media print {
+	body {
+		width: auto; /* Fixes rendering issues */ 
+		font-family: "Droid Serif", "DejaVu Serif", serif;
+		font-size: 80%;
+	}
 	.footnote-backref { display: none; }
+	a { text-decoration: none; }
 }

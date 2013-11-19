@@ -55,12 +55,12 @@ Let $k$ be the number of primes up to $\sqrt{L}$. The prime counting function[^p
 The longer the list of candidate primes, the smaller the impact of communications.
 
 ##### DPS flow graph #####
-![DPS Flow graph for the first strategy](images/dps-flow_strat1.png)
+![DPS Flow graph for the first strategy](/images/dps-flow_strat1.svg)
 
-![[S]](images/dps-flow_data-s.png) A dummy object signaling to the `Split` process that it can start.
-![[1]](images/dps-flow_data-1.png) Contains a list of primes and optionally the *FIN* signal.
-![[2]](images/dps-flow_data-2.png) Contains an *ACK* signal and optionally a list of primes.
-![[F]](images/dps-flow_data-f.png) A dummy object signaling the end of the sieve.
+![[S]](/images/dps-flow_data-s.svg) A dummy object signaling to the `Split` process that it can start.
+![[1]](/images/dps-flow_data-1.svg) Contains a list of primes and optionally the *FIN* signal.
+![[2]](/images/dps-flow_data-2.svg) Contains an *ACK* signal and optionally a list of primes.
+![[F]](/images/dps-flow_data-f.svg) A dummy object signaling the end of the sieve.
 
 As DPS requires that each message sent through the `Split` generates a message received by the `Merge` (TODO: Verify claim), the slave processes must send an acknowledgment message to the merge even if they are not able to send the list of primes in their chunk yet.
 
