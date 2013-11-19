@@ -43,7 +43,7 @@ This strategy is very simple and still might achieve good results by letting the
 
 This technique scales very well for the portion of the list greater than $\sqrt{L}$. In facts, for a given $L$, the size of the chunk processed by each slave is inversely proportional to the number of slaves. In the extreme case where there are $L - \lfloor \sqrt{L} \rfloor$ slaves (i.e. one slave for each number greater than $\sqrt{L}$), the limiting factor will be given by the rate at which the master will broadcast new primes, which is not parallelized with this strategy.
 
-Another downside of this strategy is the memory limitation: If there are not enough slaves to hold the entire second portion of the list, the algorithm won't work as-is. Caching the primes sent by the master might be a way to overcome the limitation, however the benefits of the on-the-fly sieving (sieving a chunk while the master continuously sends new primes) would not be applicable for all chunks after the first one slaves process.
+Another downside of this strategy is the memory limitation: If there are not enough slaves to hold the entire second portion of the list, the algorithm won't work as-is. Caching the primes sent by the master might be a way to overcome the limitation, however the benefits of the on-the-fly sieving (sieving a chunk while the master continuously sends new primes) would not be applicable for all chunks after the first $p$ ones.
 
 ##### Computational complexity #####
 Let $k$ be the number of primes up to $\sqrt{L}$. The prime counting function[^primeCountingFunction] $\pi(n)$ gives the number of primes up to $n$, so we have the relation $k = \pi(L)$.
@@ -55,12 +55,12 @@ Let $k$ be the number of primes up to $\sqrt{L}$. The prime counting function[^p
 The longer the list of candidate primes, the smaller the impact of communications.
 
 ##### DPS flow graph #####
-![DPS Flow graph for the first strategy](dps-flow_strat1.png)
+![DPS Flow graph for the first strategy](images/dps-flow_strat1.png)
 
-![](dps-flow_data-s.png) A dummy object signaling to the `Split` process it can start processing.
-![](dps-flow_data-1.png) Contains a list of primes and optionally the *FIN* signal.
-![](dps-flow_data-2.png) Contains an *ACK* signal and optionally a list of primes.
-![](dps-flow_data-f.png) A dummy object signaling the end of the sieve.
+![[S]](images/dps-flow_data-s.png) A dummy object signaling to the `Split` process that it can start.
+![[1]](images/dps-flow_data-1.png) Contains a list of primes and optionally the *FIN* signal.
+![[2]](images/dps-flow_data-2.png) Contains an *ACK* signal and optionally a list of primes.
+![[F]](images/dps-flow_data-f.png) A dummy object signaling the end of the sieve.
 
 As DPS requires that each message sent through the `Split` generates a message received by the `Merge` (TODO: Verify claim), the slave processes must send an acknowledgment message to the merge even if they are not able to send the list of primes in their chunk yet.
 
@@ -76,11 +76,11 @@ The strategy involves a turn-based approach, where at step $i$ the process respo
 
 At step $i$ process with *pid* $i$ performs the finishing sieve on its chunk then broadcasts the newly found primes to all other processes, which perform the sieve on their own chunk using the broadcast primes. Then at step $i+1$, process $i+1$ finishes its own chunk. Again, it broadcasts the newly found primes and all other processes perform the sieve on their own chunk with the primes found by process $i+1$. And so on...
 
-Additionally, each process keeps in memory the whole list of primes found so far, including those broadcast by other processes (which actually amounts to a kind of *shared* list of primes). This allows each process to start processing a new chunk as soon as they found all primes in their chunk. A new chunk is first sieved using the shared list of primes, then the normal processing can resume. When process $p$ has found all primes in his chunk, process $1$ can continue (as if it were the process $p+1$).
+Additionally, each process keeps the whole list of primes found so far, including those broadcast by other processes (which actually amounts to a kind of *shared* list of primes). This allows each process to start processing a new chunk as soon as they found all primes in their chunk. A new chunk is first sieved using the shared list of primes, then the normal processing can resume. When process $p$ has found all primes in his chunk, process $1$ can continue (as if it were the process $p+1$).
 
-If the list of candidate primes is bounded (i.e. there is an upper limit $L$), the algorithm stops after the chunk $l$ that contains $\sqrt{L}$ is finished. When process *pid* $l$ finishes, it sends the new primes to other processes, which in turn perform the sieve using the new primes found by process $l$. But then process $l+1$ does not continue, and instead all processes send to the master their list of remaining primes (unmarked number in their chunk). If needed, one arbitrary process can also send the shared list to the master.
+If the list of candidate primes is bounded (i.e. there is an upper limit $L$), the algorithm stops after the chunk $l$ that contains $\sqrt{L}$ is finished. When process *pid* $l$ finishes, it sends the new primes to other processes, which in perform the sieve using the new primes found by process $l$ on all their remaining chunks (i.e. without communication). When done, all processes send the primes they found in that last big round (over several chunks at once) to the master.
 
-Finally, the master process with *pid* $0$ is only responsible for initiating the sieve, by broadcasting the initial conditions to all other processes, such as the limit $L$, an initial list of primes and the lower bound for the sieve (which is actually the upper bound $L$ of the initial list of primes), the size of the chunks, the number of processes, and other environment variables if needed. If the list of candidate primes is unbounded, process $0$ can also be responsible of collecting occasionally the shared list of primes to save it or display it to the client.
+Finally, the master process with *pid* $0$ is only responsible for initiating the sieve, by broadcasting the initial conditions to all other processes, such as the limit $L$, an initial list of primes and the lower bound for the sieve (which is actually the upper bound $L$ of the initial list of primes), the size of the chunks, the number of processes, and other parameters if needed. If the list of candidate primes is unbounded, process $0$ can also be responsible of collecting occasionally the shared list of primes to save it or display it to the client.
 
 Aside from communications from and to process $0$, which are negligible, this strategy requires only the communication of newly found primes to all processes (the broadcast that updates the shared list of primes), which happens once for every chunk.
 
@@ -102,9 +102,24 @@ However, since the pipeline is only conceptual, it is possible to relax the *Sie
 #### Discussing the strategy ####
 This strategy is more involved than the first one and requires that processes are synchronized in order to implement the pipelined setting as described above. Hopefully, the synchronization is easily done using the communication stages *Update* and *Broadcast*.
 
-The clear advantage of this strategy over the first one is that it allows to parallelize every part of the sieve, including the serial part of the first strategy. As side effect, the strategy also allows to continue as long as the available memory and the implementation allow to represent numbers the application has to deal with.
+The strategy distributes the serial part of the algorithm over several processes, which might hinder performances as the serial part is interleaving with communications in order to change round (in terms of the first strategy, it is like switching the role of *master* to another process).
 
-On the communication side, the number of communications is comparable to that of the first strategy in terms of number of primes that are communicated, and even less if we count the number of messages: unlike the first strategy, where the master sends a message for at least each prime up to $\sqrt[4]{L}$, in this strategy a message is sent only once for each finished chunk.
+The clear advantage of this strategy over the first one is that it allows to continue sieving as long as the available memory and the implementation allow to represent numbers the application has to deal with. Another advantage in the bounded version is that if the number of processes is limited and $L$ is very big, this strategy will gracefully handle all the numbers while the first strategy will hit memory limitations (as each slave has to handle a chunk of size $(L - \sqrt{L}) / p$) as it has to finishes in one "round". In this strategy, the chunks size is limited, e.g. to the maximum memory available, and the number of rounds is flexible.
+
+On the communications side, their number is comparable to that of the first strategy in terms of number of sent primes, and even less if we count the number of messages: unlike the first strategy, where the master sends a message for at least each prime up to $\sqrt[4]{L}$, in this strategy a message is sent only once for each finished chunk.
+
+##### Computational complexity #####
+The bounded version of the strategy is used to formulate its computational complexity.
+
+Again, let $k = \pi(\sqrt{L})$ the number of of primes up to the square root of the bound $L$. The number of rounds is $r = \sqrt{L} / S + 1$. The size of the chunks $S$ is arbitrary and the number of chunks $s = L/S$. $l$ is the chunk that contains $\sqrt{L}$, i.e. $l = \sqrt{L} / S$, and by extension the number of the round in which chunk $l$ is finished.
+
+* Each process will have to loop at most $k$ times over each of their chunk. The parallel computation time is therefore $ksS = kL$.
+* Each process will send one message per chunk, up to chunk $l$. Then each process will send one message to the master. The total number of messages is therefore $l + p = p + \sqrt{L} / S$.
+* The C/C ratio is therefore: $\frac{kL}{p + \sqrt{L} / S} = O(\sqrt{L})$.
+
+
+##### DPS flow graph #####
+TODO
 
 
 Detailed theoretical analysis
