@@ -15,9 +15,10 @@ td { padding: 0 5px; vertical-align: top; }
 @media print {
 	body {
 		width: auto; /* Fixes rendering issues */ 
-		font-family: "Droid Serif", "DejaVu Serif", serif;
-		font-size: 80%;
+		font-family: "Droid Serif", "DejaVu Serif", serif; /* Ensures serif for printing */
+		font-size: 80%; /* More text on the page */
 	}
-	.footnote-backref { display: none; }
+	
 	a { text-decoration: none; }
+	.footnote-backref { display: none; }
 }
