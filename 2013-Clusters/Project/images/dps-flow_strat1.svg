@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="dps-flow_strat1_1.svg">
+   sodipodi:docname="dps-flow_strat1.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -29,7 +29,7 @@
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1280"
-     inkscape:window-height="734"
+     inkscape:window-height="773"
      inkscape:window-x="0"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
@@ -201,7 +201,7 @@
              sodipodi:role="line"
              id="tspan3027-1-5-9"
              x="-417.12097"
-             y="574.83569">S</tspan></text>
+             y="574.83569">C</tspan></text>
       </g>
     </g>
     <g
@@ -236,7 +236,7 @@
              sodipodi:role="line"
              id="tspan3027-1-5-9-7"
              x="-417.12097"
-             y="574.83569">1</tspan></text>
+             y="574.83569">S</tspan></text>
       </g>
     </g>
     <g
@@ -271,7 +271,7 @@
              sodipodi:role="line"
              id="tspan3027-1-5-9-1"
              x="-417.12097"
-             y="574.83569">2</tspan></text>
+             y="574.83569">D</tspan></text>
       </g>
     </g>
     <g
@@ -306,7 +306,7 @@
              sodipodi:role="line"
              id="tspan3027-1-5-9-0"
              x="-417.12097"
-             y="574.83569">F</tspan></text>
+             y="574.83569">C</tspan></text>
       </g>
     </g>
   </g>
