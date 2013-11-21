@@ -18,9 +18,22 @@ Given a list of unmarked integers $[2..L]$ where $L$ is the upper limit of candi
 ### Algorithmic complexity ###
 The complexity of the algorithm depends on $L$ and the number of primes in the list up to $\sqrt{L}$. It can be proved that the actual complexity is $O(n \log \log n)$, as the prime harmonic series asymptotically approaches $\log \log n$.[^algoComplexity]
 
-### Achievable speedup ###
+### Achievable speedup (Amdahl's Law) ###
 
-TODO (Upper bound!)
+The maximum achievable speedup for an application where a fraction $f$ cannot be parallelized is
+
+$$S_p = \frac{t_s}{t_p} \leq \frac{1}{f + \frac{1 - f}{p}} = \frac{p}{1 + (p - 1) f}$$
+
+Serial part of the application:
+
+* Initializing the list of approx. $L$ numbers, i.e. looping once over the list;
+* Retrieving the primes found by the sieve, which is also done with one loop over the list.
+
+The actual sieving is considered parallelizable, and consists of $\sqrt{L}$ loops over the list of numbers. So we have $f = \frac{2}{\sqrt{L}}$ and therefore
+
+$$S_p = \frac{1}{\frac{2}{\sqrt{L}} + \frac{1 - \frac{2}{\sqrt{L}}}{p}} = \frac{p}{1 + (p - 1) \frac{2}{\sqrt{L}}}$$
+
+See the annex for graphs that show the achievable speedup with varying number of processors $p$ and number of candidate primes $L$. The dependency between those two factors and the limit of the achievable speedup are clearly visible.
 
 
 Parallelization strategies
@@ -50,19 +63,18 @@ Let $k$ be the number of primes up to $\sqrt{L}$. The prime counting function[^p
 
 * Each slave will be handling a chunk of size $S = L/p$, and therefore will be performing $k$ loops over $S$ elements. So the parallel computation time is $k(L / p)$.
 * The master will send $kp$ messages (broadcasting the primes) and receive $p$ messages (the primes found by the slaves), amounting to a total of $p(k+1)$ messages.
-* Computation/Communication ratio: $\frac{kL}{(k+1)p^2} = O(L)$.
+* Computation/Communication ratio: $\frac{kL}{(k+1)p^2} = O(L / p^2)$.
 
-The longer the list of candidate primes, the smaller the impact of communications.
+The ratio increases linearly with the number of candidate primes, but decreases quadratically with the number of CPUs. This means that for a fixed $L$, the number of CPUs has a highly negative impact, but for a fixed number of CPUs, the size of the list is neutral.
 
 ##### DPS flow graph #####
 ![DPS Flow graph for the first strategy](/images/dps-flow_strat1.svg)
 
-![[S]](/images/dps-flow_data-s.svg) A dummy object signaling to the `Split` process that it can start.
-![[1]](/images/dps-flow_data-1.svg) Contains a list of primes and optionally the *FIN* signal.
-![[2]](/images/dps-flow_data-2.svg) Contains an *ACK* signal and optionally a list of primes.
-![[F]](/images/dps-flow_data-f.svg) A dummy object signaling the end of the sieve.
+![[C]](/images/dps-flow_data-c.svg) A dummy control message signaling the start or the end of the sieving.
+![[S]](/images/dps-flow_data-s.svg) Contains a list of primes and optionally the *FIN* signal.
+![[D]](/images/dps-flow_data-d.svg) Contains an *ACK* signal and optionally a list of primes.
 
-As DPS requires that each message sent through the `Split` generates a message received by the `Merge` (TODO: Verify claim), the slave processes must send an acknowledgment message to the merge even if they are not able to send the list of primes in their chunk yet.
+As DPS requires that each message sent through the `Split` generates a message received by the `Merge`, the slave processes must send an acknowledgment message to the merge even if they are not able to send the list of primes in their chunk yet.
 
 When the master sends the last prime to the slaves, it signals that there are no more primes coming by setting the *FIN* flag. When slaves have done processing their chunk with the last primes, they send the *ACK* message with a list of all the primes they found.
 
@@ -96,8 +108,8 @@ If we imagine the setting as a pipeline, it would be a five-stage pipeline with 
 
 Stages *Sieve II*, *Broadcast* and *Sieve III* are only performed by a process when it is its turn to finish a chunk. Non-finishing processes only perform the *Update* and *Sieve I* stages before exiting the pipeline.
 Additionally, it must be noted that the *Update* and *Broadcast* stages must happen at the same time, i.e. all non-finishing processes must be in the *Update* stage when the finishing one is in the *Broadcast* stage.
-Finally, it can be noted that this design allows for the *Sieve III* stage to take up to the time needed for *Sieve I* and *Sieve II* combined, which might be useful as *Sieve III* is actually the same as *Sieve I* except that it uses all primes found so far instead of only the primes of the last update.
-However, since the pipeline is only conceptual, it is possible to relax the *Sieve III* stage by merging it with *Update* and *Sieve I* while buffering incoming broadcasts.
+Finally, it can be noted that this design allows for the *Sieve III* stage to take up to the time needed for *Sieve I* and *Sieve II* combined, which might be useful as *Sieve III* actually does the same operation as *Sieve I* except that it uses all primes found so far instead of only the primes of the last update.
+However, since the pipeline is only conceptual, it is also possible to relax the *Sieve III* stage by merging it with followings *Update* and *Sieve I* while buffering incoming broadcasts.
 
 #### Discussing the strategy ####
 This strategy is more involved than the first one and requires that processes are synchronized in order to implement the pipelined setting as described above. Hopefully, the synchronization is easily done using the communication stages *Update* and *Broadcast*.
@@ -113,21 +125,48 @@ The bounded version of the strategy is used to formulate its computational compl
 
 Again, let $k = \pi(\sqrt{L})$ the number of of primes up to the square root of the bound $L$. The number of rounds is $r = \sqrt{L} / S + 1$. The size of the chunks $S$ is arbitrary and the number of chunks $s = L/S$. $l$ is the chunk that contains $\sqrt{L}$, i.e. $l = \sqrt{L} / S$, and by extension the number of the round in which chunk $l$ is finished.
 
-* Each process will have to loop at most $k$ times over each of their chunk. The parallel computation time is therefore $ksS = kL$.
+* Each process will have to loop at most $k$ times over each of their chunk. The parallel computation time is therefore $ksS = kL$. Note that $k = O(\sqrt{L})$.
 * Each process will send one message per chunk, up to chunk $l$. Then each process will send one message to the master. The total number of messages is therefore $l + p = p + \sqrt{L} / S$.
-* The C/C ratio is therefore: $\frac{kL}{p + \sqrt{L} / S} = O(\sqrt{L})$.
+* The Computation/Communication ratio is therefore: $\frac{kL}{p + \sqrt{L} / S} = O(L^{1.5} / p)$.
+
+This strategy is much more efficient than the first one in terms of computational complexity, as the ratio decreases only linearly with the number of CPUs but grows better than linearly with the number of candidate primes. The communications have much less impact with this strategy.
 
 
 ##### DPS flow graph #####
-TODO
+![DPS Flow graph for the second strategy](/images/dps-flow_strat2.svg)
+
+![[C]](/images/dps-flow_data-c.svg) A dummy control message signaling the start or the end of the sieving.
+![[S]](/images/dps-flow_data-s.svg) Signals to the slaves that they can start the sieving. May contain an initial list of primes and other parameters.
+![[D]](/images/dps-flow_data-d.svg) Signals to the master that a slave finished the sieving. Contains a list of primes.
+![[U]](/images/dps-flow_data-u.svg) New primes broadcast to all slaves by the one that finished its chunk.
+![[A]](/images/dps-flow_data-a.svg) Dummy acknowledgment message used to terminate the broadcast.
+
+
+Pairs of *Sieve* and *Update* operations have to be implemented within a same operating system process as they both have to access the local instance of the shared list of primes (*Update* writes to that list, while *Sieve* reads from it).
+
+The *broadcast* stage is implemented with a `Split` operation, which is done only by the process that finishes its chunk. A ![[U]](/images/dps-flow_data-u.svg) message is sent to all processes, which update their local instance of the shared list of primes (*update* stage) and send back an acknowledgment message in order to terminate the broadcast with the `Merge` operation (a DPS requirement). When the broadcast is done, the broadcasting process can continue the sieving as described in the strategy above.
+
+In the unbounded version of the strategy, it is desired that the master occasionally collects primes found so far. In order to achieve this, flow control is used between the master `Split` and `Merge` operations, which allows to send several ![[S]](/images/dps-flow_data-s.svg) messages to the slaves, which in turn can send several ![[D]](/images/dps-flow_data-d.svg) messages to the master with the primes found so far (or actually the primes found since the last ![[D]](/images/dps-flow_data-d.svg) message was sent). In the bounded version, the master sends only one ![[S]](/images/dps-flow_data-s.svg) to each slave, and the slaves send only one ![[D]](/images/dps-flow_data-d.svg) message when the whole sieving is done (in which case flow control is not needed).
 
 
 Detailed theoretical analysis
 -----------------------------
 
+The detailed analysis is based on the first strategy.
+
 TODO
 
 
+Annex
+-----
+
+### Achievable speedup: Graphs ###
+
+<!-- TODO: Change to .svg when actually printing -->
+![](/images/achievable-speedup/1000p1000000L.png)
+![](/images/achievable-speedup/10p1000L.png)
+![](/images/achievable-speedup/100p100L.png)
+![](/images/achievable-speedup/10p100000L.png)
 
 <!-- Footnodes -->
 [^algoComplexity]: [http://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Algorithm_complexity]()
