@@ -11,14 +11,46 @@ th:nth-child(even), td:nth-child(even) { background-color: #fafafa; }
 th { padding: 0 0.5em; }
 td { padding: 0 5px; vertical-align: top; }
 
+hr.invisible { clear: both; border: none; }
+
+
+blockquote.funquote {
+  border: none;
+  float: right;
+
+  text-align: left;
+  font-style: italic;
+  color: #a8a8a8;
+
+  transform: rotate(-7deg);
+
+  /* Stuffs for the quote mark decorations */
+  /* It seems that Firefox only rotates positioned :before and :after elements */
+  position: relative;     /* Makes this block the reference for positioned children */
+  padding-right: 30px;    /* Moves the right quote to the right */
+  padding-left: 30px;     /* Moves the left quote to the left */
+}
+
+blockquote.funquote:before,
+blockquote.funquote:after { position: absolute; font-size: 3em; color: #d9d9d9; transform: rotate(14deg); }
+blockquote.funquote:before { top: 0; left: 0; content: "“"; }
+blockquote.funquote:after { bottom: 0; right: 0; content: "„"; }
+blockquote.funquote cite { display: block; text-align: right; color: #d9d9d9; }
+blockquote.funquote cite:before { content: '— '; }
+
 /* Only when printing */
 @media print {
-	body {
-		width: auto; /* Fixes rendering issues */ 
-		font-family: "Droid Serif", "DejaVu Serif", serif; /* Ensures serif for printing */
-		font-size: 80%; /* More text on the page */
-	}
-	
-	a { text-decoration: none; }
-	.footnote-backref { display: none; }
+  body {
+    width: auto; /* Fixes rendering issues */ 
+    font-family: "Droid Serif", "DejaVu Serif", serif; /* Ensures serif for printing */
+    font-size: 80%; /* More text on the page */
+  }
+  
+  a { text-decoration: none; }
+  .footnote-backref { display: none; }
+
+  blockquote.funquote { color: #a8a8a8 !important; }
+  blockquote.funquote:before,
+  blockquote.funquote:after,
+  blockquote.funquote cite { color: #d9d9d9 !important;}
 }

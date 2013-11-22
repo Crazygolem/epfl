@@ -1,8 +1,18 @@
-Program parallelization on clusters of PCs — Project: Sieve of Eratosthenes
-===========================================================================
+Project: Sieve of Eratosthenes
+==============================
 
+<blockquote class="funquote">
+  Move 'ZIG'.<br/>
+  For great justice.
+  <cite>Captain</cite>
+</blockquote>
+
+Course: Program parallelization on clusters of PCs
 Author: Jeremiah Menétrey
-Due date: Nov. 20, 2013
+Due date: Nov. 25, 2013
+
+<hr class="invisible" />
+
 
 Description of the application
 ------------------------------
