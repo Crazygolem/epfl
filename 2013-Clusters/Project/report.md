@@ -1,7 +1,7 @@
-Project: Sieve of Eratosthenes
-==============================
+Project — Sieve of Eratosthenes
+===============================
 
-<blockquote class="funquote">
+<blockquote class="funquote cite">
   Move 'ZIG'.<br/>
   For great justice.
   <cite>Captain</cite>
@@ -179,5 +179,5 @@ Annex
 ![](/images/achievable-speedup/10p100000L.png)
 
 <!-- Footnodes -->
-[^algoComplexity]: [http://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Algorithm_complexity]()
-[^primeCountingFunction]: [http://en.wikipedia.org/wiki/Prime_number#Number_of_prime_numbers_below_a_given_number]()
+[^algoComplexity]: [Sieve of Eratosthenes on Wikipedia](http://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Algorithm_complexity)
+[^primeCountingFunction]: [Prime number on Wikipedia](http://en.wikipedia.org/wiki/Prime_number#Number_of_prime_numbers_below_a_given_number)

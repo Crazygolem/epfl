@@ -14,29 +14,34 @@ td { padding: 0 5px; vertical-align: top; }
 hr.invisible { clear: both; border: none; }
 
 
+/* Funny stuff is funny */
 blockquote.funquote {
   border: none;
   float: right;
 
-  text-align: left;
+  text-align: left;     /* 'justify' might be prettier on long texts */
   font-style: italic;
+  line-height: 1.1em;
   color: #a8a8a8;
 
   transform: rotate(-7deg);
 
-  /* Stuffs for the quote mark decorations */
+  /* Stuffs for the quotation mark decorations */
   /* It seems that Firefox only rotates positioned :before and :after elements */
-  position: relative;     /* Makes this block the reference for positioned children */
-  padding-right: 30px;    /* Moves the right quote to the right */
-  padding-left: 30px;     /* Moves the left quote to the left */
+  position: relative;   /* Makes this block the reference for positioned children */
+  padding-left: 2em;    /* Moves the left quote to the left */
+  padding-right: 2em;   /* Moves the right quote to the right */
 }
 
 blockquote.funquote:before,
 blockquote.funquote:after { position: absolute; font-size: 3em; color: #d9d9d9; transform: rotate(14deg); }
-blockquote.funquote:before { top: 0; left: 0; content: "“"; }
-blockquote.funquote:after { bottom: 0; right: 0; content: "„"; }
-blockquote.funquote cite { display: block; text-align: right; color: #d9d9d9; }
+blockquote.funquote:before { top: 0; left: 0; content: '“'; }
+blockquote.funquote:after { bottom: 0; right: 0; content: '„'; }
+blockquote.funquote.cite:after { bottom: 0.6em; } /* Better effect when the author is cited */
+blockquote.funquote cite { display: block; text-align: right; color: #d9d9d9; margin: 0.5em 0.5em 0 0; }
 blockquote.funquote cite:before { content: '— '; }
+
+
 
 /* Only when printing */
 @media print {
@@ -46,11 +51,13 @@ blockquote.funquote cite:before { content: '— '; }
     font-size: 80%; /* More text on the page */
   }
   
+  .footnote { text-align: left; }
+
   a { text-decoration: none; }
   .footnote-backref { display: none; }
 
   blockquote.funquote { color: #a8a8a8 !important; }
   blockquote.funquote:before,
   blockquote.funquote:after,
-  blockquote.funquote cite { color: #d9d9d9 !important;}
+  blockquote.funquote cite { color: #d9d9d9 !important; }
 }
