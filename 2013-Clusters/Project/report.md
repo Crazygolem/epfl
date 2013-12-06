@@ -41,9 +41,9 @@ Serial part of the application:
 
 The actual sieving is considered parallelizable, and consists of $\sqrt{L}$ loops over the list of numbers. So we have $f = \frac{2}{\sqrt{L}}$ and therefore
 
-$$S_p = \frac{1}{\frac{2}{\sqrt{L}} + \frac{1 - \frac{2}{\sqrt{L}}}{p}} = \frac{p}{1 + (p - 1) \frac{2}{\sqrt{L}}}$$
+$$S_p \leq \frac{1}{\frac{2}{\sqrt{L}} + \frac{1 - \frac{2}{\sqrt{L}}}{p}} = \frac{p}{1 + (p - 1) \frac{2}{\sqrt{L}}} = \frac{p \sqrt{L}}{2p + \sqrt{L} - 2}$$
 
-See the annex for graphs that show the achievable speedup with varying number of processors $p$ and number of candidate primes $L$. The dependency between those two factors and the limit of the achievable speedup are clearly visible.
+The formula shows that the speedup grows as we add CPUs and increase the size of the list. See the annex for graphs that show the achievable speedup with varying number of processors $p$ and number of candidate primes $L$. The dependency between those two factors and the limit of the achievable speedup are clearly visible.
 
 
 Parallelization strategies
@@ -84,7 +84,9 @@ The ratio increases linearly with the number of candidate primes, but decreases 
 ![[S]](/images/dps-flow_data-s.svg) Contains a list of primes and optionally the *FIN* signal.
 ![[D]](/images/dps-flow_data-d.svg) Contains an *ACK* signal and optionally a list of primes.
 
-As DPS requires that each message sent through the `Split` generates a message received by the `Merge`, the slave processes must send an acknowledgment message to the merge even if they are not able to send the list of primes in their chunk yet.
+The `Sieve` operation performed by the master is done in the same process as the `Split` and `Merge` operations, but in another thread. This allows DPS to optimize the communication between the `Sieve` and the `Split` operation, by not actually sending a message but rather sharing memory.
+
+As DPS requires that each message sent through the `Split` generates a message received by the `Merge`, the slave processes must send an acknowledgment message to the merge, even if they are not able to send the list of primes in their chunk yet.
 
 When the master sends the last prime to the slaves, it signals that there are no more primes coming by setting the *FIN* flag. When slaves have done processing their chunk with the last primes, they send the *ACK* message with a list of all the primes they found.
 
@@ -159,12 +161,99 @@ The *broadcast* stage is implemented with a `Split` operation, which is done onl
 In the unbounded version of the strategy, it is desired that the master occasionally collects primes found so far. In order to achieve this, flow control is used between the master `Split` and `Merge` operations, which allows to send several ![[S]](/images/dps-flow_data-s.svg) messages to the slaves, which in turn can send several ![[D]](/images/dps-flow_data-d.svg) messages to the master with the primes found so far (or actually the primes found since the last ![[D]](/images/dps-flow_data-d.svg) message was sent). In the bounded version, the master sends only one ![[S]](/images/dps-flow_data-s.svg) to each slave, and the slaves send only one ![[D]](/images/dps-flow_data-d.svg) message when the whole sieving is done (in which case flow control is not needed).
 
 
+### Third strategy: Almost no communication ###
+Each process is assigned a chunk of the list after $\sqrt{L}$. This can be done deterministically without communications.
+
+Then each process performs the sieving up to $\sqrt{L}$, while also crossing-out the numbers in their respective chunk.
+
+Finally, a *master* process gather all primes found by the other processes. The master can be one of the processes that performed the sieving.
+
+#### Discussing the strategy ####
+This strategy is a variation of the first one which minimizes the amount of communications. If the density of primes among candidate primes is such that the communication time exceeds the computation time to find a given amount of primes, e.g. when starting the sieving from $2$ or $3$, reducing the amount of communications is more beneficial than trying to parallelize every bit of the program.
+
+Part of the processing in this strategy is done by every node, which wastes resources, but this allows to reduce the amount of communications. It could also be possible to use one process to sieve the numbers up to $\sqrt{L}$, which would allow other processes to idle and therefore be available for unrelated processing, or they could also idle and consume less power, but then more communications would be required, although a more manageable amount than for the first strategy.
+
+#### Computational complexity ####
+Let $k = \pi(\sqrt{L})$ as defined previously.
+
+* Each process will be handling a list of number composed by the numbers up to $\sqrt{L}$ and their respective chunk, which is of size $\frac{L - \sqrt{L}}{p}$ and they will therefore perform $k$ loops over $\frac{L - \sqrt{L}}{p} + \sqrt{L}$ numbers.
+* The only communications are those required to send the list of found primes to the master. Using a scenario where the master is not one of the processing node, only $p$ messages are sent.
+* Computation/Communication ratio: $O(\frac{k (L - \sqrt{L} (p - 1))}{p^2})$. If we assume that $p << \sqrt{L}$, then the ratio becomes $O(\frac{kL}{p^2}) = O(\frac{L^{1.5}}{p^2})$.
+
+#### DPS flow graph ####
+![DPS Flow graph for the first strategy](/images/dps-flow_strat3.svg)
+
+![[C]](/images/dps-flow_data-c.svg) A dummy control message signaling the start or the end of the sieving.
+![[D]](/images/dps-flow_data-d.svg) Contains a list of found primes.
+
+The *master* sends a dummy message to all processes, making them start the sieving. When a process finishes its sieving, it sends the list of found primes back to the *master*. The master merges primes found by all the processes and terminates the program by sending a ![[C]](/images/dps-flow_data-c.svg) message.
+
+
+
 Detailed theoretical analysis
 -----------------------------
 
-The detailed analysis is based on the first strategy.
+In order to analyze the strategies, computations and communications times were measured. Computations time is measured by running an implementation of the serial algorithm several times with different upper limit values, and to measure communications time a simple parallel DPS program was created, which measures the RTT of messages sent with different payloads from a master thread to slave threads (`Split`-`Process`-`Merge` flow, with the `Process` operation handled by distinct threads and actually just sending back the input message to the master).
 
-TODO
+For computations time, it was found that the processing time is linearly dependent on the number of primes or the number of candidate primes (the number of primes being almost linearly dependent on the number of candidate primes).
+
+For communications time, it was also found that after a threshold on the payload size, the communication time over the size of the payload was approximatively constant.
+
+The theoretical analysis below is made assuming those two observations hold in the general case. The values found empirically are approximatively
+
+* Processing time: 6.4e-6 ms for each candidate prime;
+* Communication time: 5.0e-4 ms per prime in the payload of a message from one node to another (half of the RTT).
+* Communication latency: Approx. 15 ms.
+* Number of actual primes among candidate primes: 5.6% (mean for $L$ in the range 1.25e7 to 3.2e9]. The number of primes is actually decreasing while the number of candidate primes increases, but in order to simplify the analysis, a fixed value is used. This leads to an overestimation of the impact of communications. In fact, it is expected that $\lim\limits_{x \to \infty} \frac{\pi(n)}{n} = 0$.
+
+Using those values, there is approximatively one prime found each 1.1e-4 ms, which makes the communication time five time larger than the computation time. In the light of this result, the third strategy is chosen for analysis and potential implementation, as the first strategy would require approximatively one message for each prime found, and the third one would require far less messages.
+
+### Timing diagram ###
+![Timing diagram](/images/timings_strat1.svg)
+
+Critical path (highlighted in red in the diagram):
+
+* Send ![[C]](/images/dps-flow_data-c.svg) messages to processes 1, 2 and 3
+* Sieving by process 3
+* Receiving ![[D]](/images/dps-flow_data-d.svg) messages from processes 1, 2 and 3
+
+From the above diagram, we can derive a speedup formula.
+
+* $t_p$: total processing time (serial solution)
+* $t_{ps}$: processing time for the sieving up to $\sqrt{L}$
+* $t_{pc}$: processing time for the crossing-out after $\sqrt{L}$ (serial solution)
+* $t_l$: communication latency
+* $t_r$: time to send the whole list of primes
+
+$t_{serial} = t_{ps} + t_{pc} = t_p$
+$t_{par} = n \cdot t_l + t_{ps} + \frac{t_{pc}}{n} + t_l + n \frac{t_r}{n} = (n + 1) t_l + t_r + t_{ps} + \frac{t_{pc}}{n}$
+
+Note that $t_{ps} + \frac{t_{pc}}{n} = \sqrt{t_p} + \frac{t_p - \sqrt{t_p}}{n} = \frac{(n - 1) \sqrt{t_p} + tp}{n}$.
+Then $t_{par} = (n + 1) t_l + t_r + \frac{n - 1}{n} \sqrt{t_p} + \frac{t_p}{n}$.
+
+Finally, the speedup is
+$$S_p = \frac{t_{serial}}{t_{par}} = \frac{t_p}{t_c + \frac{n - 1}{n} \sqrt{t_p} + \frac{t_p}{n}} = \frac{1}{t_c + \frac{n-1}{n \sqrt{t_p}} + \frac{1}{n}}$$
+
+where $t_c = (n + 1) t_l + t_r$, the total communication time including latency.
+
+So for a list of numbers of to 1600000000, in which there are 79451833 primes, the expected speedup with three processes plus one master is
+
+| n   | $S_p$  |
+| --- | ------ |
+| 2   | 2.5e-5 |
+| 3   | 2.5e-5 |
+| 4   | 2.5e-5 |
+
+The same computations but for 160000000000, in which there are 6463533937 primes
+
+| n   | $S_p$  |
+| --- | ------ |
+| 2   | 2.7e-7 |
+| 3   | 2.8e-7 |
+| 4   | 2.9e-7 |
+
+This shows that even with almost no communication, the strategy is worse by several hundred of magnitude than the serial implementation. This is probably due to the final sending to all the primes to a single node, which handles one communication at a time. Switching to a distributed file system might improve the speedup by allowing not to take the final sending into the formula.
+
 
 
 Annex
