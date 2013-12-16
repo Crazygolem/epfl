@@ -5,7 +5,11 @@
 
 using namespace std;
 
-#define MAX_CHUNK_SIZE SIZE_MAX // Max value that size_t can hold
+// In this implementation, the size of the bitset has to be known at compile-time
+// Note that if set to SIZE_MAX, problems may occur when using several Range in a thread
+// or several threads in a process that use a Range.
+//#define MAX_CHUNK_SIZE SIZE_MAX / 2 // Max value that size_t can hold
+#define MAX_CHUNK_SIZE 1600000000
 
 class Range {
 private:
