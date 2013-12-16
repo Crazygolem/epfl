@@ -107,7 +107,8 @@ public:
 		findPrimes(in->min, in->max, chunkMin, chunkLimit, root, chunk);
 
 		unsigned int outSize = chunk->countUnmarked() + (in->chunkId == 0) ? root->countUnmarked() : 0;
-		DataMessage* out = new DataMessage(outSize);
+		//DataMessage* out = new DataMessage(outSize);
+		DataMessage* out = new DataMessage(outSize / 2);
 
 		if (in->chunkId == 0) {
 			for (unsigned int i = root->start; i < root->start + root->length; i++) {
@@ -116,6 +117,8 @@ public:
 				}
 			}
 		}
+
+		delete root;
 
 		for (unsigned int i = chunk->start; i < chunk->start + chunk->length; i++) {
 			if (chunk->isUnmarked(i)) {
