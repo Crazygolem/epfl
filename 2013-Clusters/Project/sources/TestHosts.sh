@@ -1,0 +1,1 @@
+mpiexec -machinefile hosts_up_winmpi.txt -n $1 hostname | awk '{print NR, $0}'
