@@ -101,15 +101,18 @@ public:
 		const unsigned int chunkMin = srMax + 1 + in->chunkId * maxChunkSize; // threadIndex ~ rank and is 0-based
 		const unsigned int chunkLimit = min(limit, chunkMin + maxChunkSize);
 
+		DEBUG(1);
 		Range* root = new Range(in->min, srLimit - in->min);
 		Range* chunk = new Range(chunkMin, chunkLimit - chunkMin);
 
+		DEBUG(2);
 		findPrimes(in->min, in->max, chunkMin, chunkLimit, root, chunk);
 
 		unsigned int outSize = chunk->countUnmarked() + (in->chunkId == 0) ? root->countUnmarked() : 0;
 		//DataMessage* out = new DataMessage(outSize);
 		DataMessage* out = new DataMessage(outSize / 2);
 
+		DEBUG(3);
 		if (in->chunkId == 0) {
 			for (unsigned int i = root->start; i < root->start + root->length; i++) {
 				if (root->isUnmarked(i)) {
@@ -117,17 +120,19 @@ public:
 				}
 			}
 		}
-
 		delete root;
 
+		DEBUG(4);
 		for (unsigned int i = chunk->start; i < chunk->start + chunk->length; i++) {
 			if (chunk->isUnmarked(i)) {
 				out->primes.push_back(i);
 			}
 		}
+		delete chunk;
 
 		DEBUG("Sending " << out->primes.size() << " primes.");
 		postDataObject(out);
+		DEBUG(5);
 	}
 
 	void findPrimes(unsigned int min, unsigned int max, unsigned int chunkMin, unsigned int chunkLimit, Range* root, Range* chunk) {
@@ -164,6 +169,7 @@ public:
 		ostringstream coutbuffer;
 
 		do {
+			DEBUG("# primes in message: " << in->primes.size());
 			primesCount += in->primes.size();
 
 			VERBOSITY(DEBUG)
