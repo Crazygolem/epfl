@@ -54,8 +54,8 @@ echo "payload_size slaves_processing message_id rtt_ms" >> "$OUTFILE"
 echo "Slaves computations: None"
 starttest
 echo "Slaves computations: Constant"
-starttest -slaves.heavy
+starttest -slaves.constant
 echo "Slaves computations: Random"
 starttest -slaves.random
 echo "Slaves computations: Distributed"
-starttest -slaves.random
+starttest -slaves.distributed
