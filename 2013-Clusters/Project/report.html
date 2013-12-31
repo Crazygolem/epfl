@@ -339,7 +339,7 @@ MathJax.Hub.Config({
   showProcessingMessages: false
 });
 </script>
-<title>report</title></head><body><h1 id="project-sieve-of-eratosthenes">Project — Sieve of Eratosthenes</h1>
+<title>report</title></head><body><h1 id="project-sieve-of-eratosthenes-parallelized-with-dps">Project — Sieve of Eratosthenes parallelized with DPS</h1>
 <blockquote class="funquote cite">
   Move 'ZIG'.<br/>
   For great justice.
@@ -519,55 +519,52 @@ $t_{par} = n \cdot t_l + t_{ps} + \frac{t_{pc}}{n} + t_l + n \frac{t_r}{n} = (n 
 <p>Note that $t_{ps} + \frac{t_{pc}}{n} = \sqrt{t_p} + \frac{t_p - \sqrt{t_p}}{n} = \frac{(n - 1) \sqrt{t_p} + t_{p}}{n}$.<br />
 Then $t_{par} = (n + 1) t_l + t_r + \frac{n - 1}{n} \sqrt{t_p} + \frac{t_p}{n}$.</p>
 <p>Finally, the speedup is<br />
-$$S_p = \frac{t_{serial}}{t_{par}} = \frac{t_p}{t_c + \frac{n - 1}{n} \sqrt{t_p} + \frac{t_p}{n}} = \frac{1}{t_c + \frac{n-1}{n \sqrt{t_p}} + \frac{1}{n}}$$</p>
+$$S_p = \frac{t_{serial}}{t_{par}} = \frac{t_p}{t_c + \frac{n - 1}{n} \sqrt{t_p} + \frac{t_p}{n}}$$</p>
 <p>where $t_c = (n + 1) t_l + t_r$, the total communication time including latency.</p>
-<p>So for a list of numbers of to 1600000000, in which there are 79451833 primes, the expected speedup with three processes plus one master is</p>
+<p>The following table shows the expected speedup for (1) numbers up to 1600000000, in which there are 79451833 primes and (2) numbers up to 160000000000, in which there are 6463533937 primes.</p>
 <table>
 <thead>
 <tr>
 <th>n</th>
-<th>$S_p$</th>
+<th>$S_p$ (1)</th>
+<th>$S_p$ (2)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>2</td>
-<td>2.5e-5</td>
-</tr>
-<tr>
-<td>3</td>
-<td>2.5e-5</td>
+<td>0.228</td>
+<td>0.274</td>
 </tr>
 <tr>
 <td>4</td>
-<td>2.5e-5</td>
+<td>0.241</td>
+<td>0.294</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0.246</td>
+<td>0.301</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0.248</td>
+<td>0.305</td>
+</tr>
+<tr>
+<td>10</td>
+<td>0.250</td>
+<td>0.307</td>
+</tr>
+<tr>
+<td>12</td>
+<td>0.251</td>
+<td>0.309</td>
 </tr>
 </tbody>
 </table>
-<p>The same computations but for 160000000000, in which there are 6463533937 primes</p>
-<table>
-<thead>
-<tr>
-<th>n</th>
-<th>$S_p$</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>2</td>
-<td>2.7e-7</td>
-</tr>
-<tr>
-<td>3</td>
-<td>2.8e-7</td>
-</tr>
-<tr>
-<td>4</td>
-<td>2.9e-7</td>
-</tr>
-</tbody>
-</table>
-<p>This shows that even with almost no communication, the strategy is worse by several hundred of magnitude than the serial implementation. This is probably due to the final sending to all the primes to a single node, which handles one communication at a time. Switching to a distributed file system might improve the speedup by allowing not to take the final sending into the formula.</p>
+<p>This shows that even with almost no communication, the strategy is worse than the serial implementation. This is probably due to the final sending of all the primes to a single node, which handles one communication at a time. Switching to a distributed file system might improve the speedup by allowing to not take the final sending into the formula, as distributed file systems are inherently parallel.</p>
+<p>We can also note that the speedup slightly improves with the number of nodes, and also with the size of the list of numbers, and that the larger the list, the better the speedup for the same improvement in nodes number.</p>
 <h2 id="annex">Annex</h2>
 <h3 id="achievable-speedup-graphs">Achievable speedup: Graphs</h3>
 <!-- TODO: Change to .svg when actually printing -->

@@ -1,5 +1,5 @@
-Project — Sieve of Eratosthenes
-===============================
+Project — Sieve of Eratosthenes parallelized with DPS
+=====================================================
 
 <blockquote class="funquote cite">
   Move 'ZIG'.<br/>
@@ -232,27 +232,24 @@ Note that $t_{ps} + \frac{t_{pc}}{n} = \sqrt{t_p} + \frac{t_p - \sqrt{t_p}}{n} =
 Then $t_{par} = (n + 1) t_l + t_r + \frac{n - 1}{n} \sqrt{t_p} + \frac{t_p}{n}$.
 
 Finally, the speedup is
-$$S_p = \frac{t_{serial}}{t_{par}} = \frac{t_p}{t_c + \frac{n - 1}{n} \sqrt{t_p} + \frac{t_p}{n}} = \frac{1}{t_c + \frac{n-1}{n \sqrt{t_p}} + \frac{1}{n}}$$
+$$S_p = \frac{t_{serial}}{t_{par}} = \frac{t_p}{t_c + \frac{n - 1}{n} \sqrt{t_p} + \frac{t_p}{n}}$$
 
 where $t_c = (n + 1) t_l + t_r$, the total communication time including latency.
 
-So for a list of numbers of to 1600000000, in which there are 79451833 primes, the expected speedup with three processes plus one master is
+The following table shows the expected speedup for (1) numbers up to 1600000000, in which there are 79451833 primes and (2) numbers up to 160000000000, in which there are 6463533937 primes.
 
-| n   | $S_p$  |
-| --- | ------ |
-| 2   | 2.5e-5 |
-| 3   | 2.5e-5 |
-| 4   | 2.5e-5 |
+| n   | $S_p$ (1) | $S_p$ (2) |
+| --- | --------- | --------- |
+| 2   | 0.228     | 0.274     |
+| 4   | 0.241     | 0.294     |
+| 6   | 0.246     | 0.301     |
+| 8   | 0.248     | 0.305     |
+| 10  | 0.250     | 0.307     |
+| 12  | 0.251     | 0.309     |
 
-The same computations but for 160000000000, in which there are 6463533937 primes
+This shows that even with almost no communication, the strategy is worse than the serial implementation. This is probably due to the final sending of all the primes to a single node, which handles one communication at a time. Switching to a distributed file system might improve the speedup by allowing to not take the final sending into the formula, as distributed file systems are inherently parallel.
 
-| n   | $S_p$  |
-| --- | ------ |
-| 2   | 2.7e-7 |
-| 3   | 2.8e-7 |
-| 4   | 2.9e-7 |
-
-This shows that even with almost no communication, the strategy is worse by several hundred of magnitude than the serial implementation. This is probably due to the final sending to all the primes to a single node, which handles one communication at a time. Switching to a distributed file system might improve the speedup by allowing not to take the final sending into the formula.
+We can also note that the speedup slightly improves with the number of nodes, and also with the size of the list of numbers, and that the larger the list, the better the speedup for the same improvement in nodes number.
 
 
 
