@@ -228,7 +228,7 @@ From the above diagram, we can derive a speedup formula.
 $t_{serial} = t_{ps} + t_{pc} = t_p$
 $t_{par} = n \cdot t_l + t_{ps} + \frac{t_{pc}}{n} + t_l + n \frac{t_r}{n} = (n + 1) t_l + t_r + t_{ps} + \frac{t_{pc}}{n}$
 
-Note that $t_{ps} + \frac{t_{pc}}{n} = \sqrt{t_p} + \frac{t_p - \sqrt{t_p}}{n} = \frac{(n - 1) \sqrt{t_p} + tp}{n}$.
+Note that $t_{ps} + \frac{t_{pc}}{n} = \sqrt{t_p} + \frac{t_p - \sqrt{t_p}}{n} = \frac{(n - 1) \sqrt{t_p} + t_{p}}{n}$.
 Then $t_{par} = (n + 1) t_l + t_r + \frac{n - 1}{n} \sqrt{t_p} + \frac{t_p}{n}$.
 
 Finally, the speedup is
