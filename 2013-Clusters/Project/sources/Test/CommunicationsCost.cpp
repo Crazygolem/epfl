@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <dps/dps.h>
 #include <dps/altserial.h>
 #include <windows.h>
@@ -7,6 +8,12 @@
 
 class MasterThread {
 	IDENTIFY(MasterThread);
+public:
+	StopWatch timer;
+};
+
+class SlaveThread {
+	IDENTIFY(SlaveThread);
 public:
 	StopWatch timer;
 };
@@ -50,7 +57,7 @@ public:
 	}
 };
 
-class Process : public dps::LeafOperation<Message, Message> {
+class Process : public dps::LeafOperation<Message, Message, SlaveThread> {
 	IDENTIFY(Process);
 public:
 	// This public member forbids the compiler "optimizing"
@@ -59,10 +66,19 @@ public:
 
 public:
 	void execute(Message* in) {
-		// Expensive operation (optional)
-		if (getController()->getConfig().getValue("heavyProcessing", 0) == 1)
-			for (int i = 0; i < INT_MAX; ++i)
-				dummy = i * i * i;
+		// Simulate expensive operation (optional, substracted from RTT)
+		if (getController()->getConfig().isSet("slaves.constant") || getController()->getConfig().isSet("slaves.random") || getController()->getConfig().isSet("slaves.distributed")) {
+			unsigned long long start = getThread()->timer.peek(StopWatch::MILLI);
+			if (getController()->getConfig().isSet("slaves.random"))
+				Sleep(rand() % 8000 + 2000); // Between 2s and 10s
+			else if (getController()->getConfig().isSet("slaves.distributed"))
+				Sleep(in->mid * 2000 + 2000);
+			else
+				Sleep(6000);
+
+			// Removes sleeping time from RTT (addition because it's a starting time)
+			in->timer = in->timer + (getThread()->timer.peek(StopWatch::MILLI) - start);
+		}
 
 		in->addRef();
 		postDataObject(in);
@@ -74,12 +90,18 @@ class Merge : public dps::MergeOperation<Message, ControlMessage, MasterThread> 
 public:
 	void execute(Message* in) {
 		int payloadSize = getController()->getConfig().getValue("payload", 0);
-		int heavyComputations = getController()->getConfig().getValue("heavyProcessing", 0);
+		char* slavesComputations = "none";
+		if (getController()->getConfig().isSet("slaves.constant"))
+			slavesComputations = "heavy";
+		else if (getController()->getConfig().isSet("slaves.random"))
+			slavesComputations = "random";
+		else if (getController()->getConfig().isSet("slaves.distributed"))
+			slavesComputations = "distributed";
 
 		do {
 			unsigned long long now = getThread()->timer.peek(StopWatch::MILLI);
 			// Output: payload_size heavy_processing message_id rtt_ms
-			std::cout << payloadSize << " " << heavyComputations << " " << in->mid << " " << now - in->timer << std::endl;
+			std::cout << payloadSize << " " << slavesComputations << " " << in->mid << " " << now - in->timer << std::endl;
 		} while ((in = waitForNextDataObject()) != NULL);
 
 		postDataObject(new ControlMessage(0));
@@ -96,10 +118,10 @@ public:
 void TestApp::start() {
 	dps::ThreadCollection<MasterThread> masterThread =
 		getController()->createThreadCollection<MasterThread>("master", 1, false);
-	dps::StatelessThreadCollection slaveThread =
-		getController()->createStatelessThreadCollection("slave");
+	dps::ThreadCollection<SlaveThread> slaveThread =
+		getController()->createThreadCollection<SlaveThread>("slave");
 
-	const char *pattern=getController()->getConfig().getValue("pat","1");
+	const char *pattern = getController()->getConfig().getValue("pat","1");
 	if (DPS_FAILED(masterThread.addThread("0")) || DPS_FAILED(slaveThread.addThread(dps::MPIMapper::get(pattern)))) {
 		std::cout << "Could not map thread collection" << std::endl;
 		return;
@@ -113,7 +135,7 @@ void TestApp::start() {
 	dps::Flowgraph graph = getController()->createFlowgraph("graph", graphB);
 
 	int nrMessages = getController()->getConfig().getValue("messages", 1);
-	std::cout << "payload_size heavy_processing message_id rtt_ms" << std::endl;
+	std::cout << "payload_size slaves_processing message_id rtt_ms" << std::endl;
 	getController()->callSchedule(graph, new ControlMessage(nrMessages));
 };
 
