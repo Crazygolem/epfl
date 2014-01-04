@@ -236,21 +236,92 @@ $$S_p = \frac{t_{serial}}{t_{par}} = \frac{t_p}{t_c + \frac{n - 1}{n} \sqrt{t_p}
 
 where $t_c = (n + 1) t_l + t_r$, the total communication time including latency.
 
-The following table shows the expected speedup for (1) numbers up to 1600000000, in which there are 79451833 primes and (2) numbers up to 160000000000, in which there are 6463533937 primes.
+The following table shows the expected speedup for numbers up to 1600000000 ($1.6 \times 10^9$) in which there are 79451833 primes.
 
-| n   | $S_p$ (1) | $S_p$ (2) |
-| --- | --------- | --------- |
-| 2   | 0.228     | 0.274     |
-| 4   | 0.241     | 0.294     |
-| 6   | 0.246     | 0.301     |
-| 8   | 0.248     | 0.305     |
-| 10  | 0.250     | 0.307     |
-| 12  | 0.251     | 0.309     |
+| n   | $S_p$ |
+| --- | ----- |
+| 2   | 0.260 |
+| 4   | 0.278 |
+| 6   | 0.284 |
+| 8   | 0.287 |
+| 10  | 0.289 |
+| 12  | 0.290 |
 
-This shows that even with almost no communication, the strategy is worse than the serial implementation. This is probably due to the final sending of all the primes to a single node, which handles one communication at a time. Switching to a distributed file system might improve the speedup by allowing to not take the final sending into the formula, as distributed file systems are inherently parallel.
+This shows that even with almost no communication, the strategy is worse than the serial implementation. This is probably due to the final sending of all the primes to a single node, which handles one communication at a time. Switching to a distributed file system might improve the speedup by allowing to not take the final sending into the formula, as distributed file systems are inherently parallel. We can also note that the speedup slightly improves with the number of nodes.
 
-We can also note that the speedup slightly improves with the number of nodes, and also with the size of the list of numbers, and that the larger the list, the better the speedup for the same improvement in nodes number.
+If we take a step back, we can see that the speedup actually is maximal at 0.293 with 28.0427 CPUs. So using 29 nodes or more will make the speedup decrease as the gain in the computation factors won't compensate for the increasing communications.
 
+![](/images/expected_speedup.png)
+
+
+Optimizations
+-------------
+
+The parallel algorithm is pretty much optimal in terms of communications. A small optimization can still be applied, which will reduce the computations: Since the first part of the list of number (up to $\sqrt{L}$) is sieved with the standard, sequential algorithm to find all primes in it, it also can be optimized by sieving only to the square root of its biggest number, i.e. the numbers to process can be reduced to $\sqrt{\sqrt{L}} = \sqrt[4]{L}$.
+
+With respect to the implementation, several optimizations can be though of.
+If we relax the assumption that any node runs only one thread, we can use several threads in a single process and share the primes found in the first part of the list, which will reduce the overal amount of computations. Memory interactions between two threads should however be studied as concurrent memory accesses for the chunks might limit the benefits of that optimization.
+On the communications side, the problem with the chosen implementation is that there is a huge bottleneck on the master, when it has to receive all primes at the end (which is done sequentially). One optimization could be to have a multi-threaded master, with one thread per slave so it can receive and process several messages at once. But ideally, what one would want is a truly parallel way of storing or processing found primes, which can be enabled with a distributed file system. It would effectively reduce the critical path to the process that has the longest processing and sending time, instead of having to add the time needed by each process to send their primes.
+Finally, in order to address, or at least mitigate memory limitations, a better approach to memory usage should have been considered (see below the comments on the implementation).
+
+
+Comments on the implementation
+------------------------------
+
+Once the parallelization strategy was decided, parallelizing the algorithm presented no real challenge in terms of coding.
+
+Problems occured however because of memory limitations. The parallel algorithm implementation uses two `bitset`s (`vector`-like structures optimized for booleans) which unlike vectors must be provided a size at compile time. For simplicity, the same size is used for both the first part of the list and the chunk, which is not optimal (we need only $\sqrt{L}$ numbers for one of them). Additionally, when sending found primes back to the master, a vector is used to store and send the primes. Using a custom data structure, the memory used for the bitsets could be reused for building the list of primes before sending them, reducing the actually needed memory to only the equivalent of the to bitsets.
+
+It is also possible to use vectors of booleans instead of bitset, which would solve the problem of oversized bitsets. However tests made using vectors showed that the processing time notably increased, so this solution was not retained as computation time was a bigger concern than the achievable size of the list.
+
+
+Performances evaluation
+-----------------------
+
+The table below shows the mean measured execution time for series of 5 executions on varying number of nodes. The effective speedup with respect to the serial implementation is also shown.
+
+| n            | Execution time [ms] | Measured $S_p$ | Predicted $S_p$ | Amdahl's law $S_p$ |
+| ------------ | ------------------- | -------------- | --------------- | ------------------ |
+| 1 (Serial)   | 11905.4             | -              |                 |                    |
+| 1 (Parallel) | 35996.38            | 0.33           |                 | 1.00               |
+| 2            | 19515.78            | 0.61           | 0.260           | 2.00               |
+| 4            | 13327.40            | 0.89           | 0.278           | 4.00               |
+| 6            | 12057.18            | 0.99           | 0.284           | 6.00               |
+| 8            | 11454.46            | 1.04           | 0.287           | 8.00               |
+| 10           | 10845.70            | 1.10           | 0.289           | 10.00              |
+| 12           | 10828.62            | 1.10           | 0.290           | 11.99              |
+
+TODO: Plot stuffs
+
+
+We see that the parallel implementation beats the serial version in terms of execution time only when using more than 6 nodes. We also see a discrepancy with the predicted speedup when we compare them side-by-side, but also with respect to the predicted maximal speedup (which is 0.293 using 28 nodes).
+
+Amdahl's law being an upper bound and not taking communications into account at all, the speedup obtained from that law (almost linear for small numbers of nodes) is not possibly achievable with the implemented algorithm.
+
+
+Corrected model
+---------------
+
+The problems with the model used to predict the speedup are mainly due to network issues: It assumes a too simplistic view of the actual network.
+
+The first problem is that the values measured in order to get some constants for the theoretical analysis are not accurate enough, or even cannot be manipulated as they have been to fit the model. For instance, the measured RTT is heavily dependant on the number, the size and the temporal distribution of the messages sent to the master.
+
+The graphs below shows the network speed computed from the time it took to send messages around the network. The setup is the following: A master send a message to all slaves and the latter send it back to the master.
+
+![](/images/netspeed_vs_payload_l.svg)
+
+In the graph above, 10 messages were sent at once for several payload sizes. For each series of tests, the network load put on the master was modified by delaying the sending of messages from the slaves. Note that the points on the graph are the mean of the actual values, aggregated by payload size and load management delay. The following load management delays were used:
+
+* None: No load control, all slaves send their message back as soon as they receive it
+* Constant: Each slave delay the reply by a given (identical) amount of time
+* Random: Each slave delay the reply by a random amount of time
+* Distributed: Each slave delay the reply by a controlled amount, which should simulate an uncongested network
+
+TODO HERE
+
+
+Conclusion
+----------
 
 
 Annex
