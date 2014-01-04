@@ -101,18 +101,19 @@ public:
 		const unsigned int chunkMin = srMax + 1 + in->chunkId * maxChunkSize; // threadIndex ~ rank and is 0-based
 		const unsigned int chunkLimit = min(limit, chunkMin + maxChunkSize);
 
-		DEBUG(1);
 		Range* root = new Range(in->min, srLimit - in->min);
 		Range* chunk = new Range(chunkMin, chunkLimit - chunkMin);
 
-		DEBUG(2);
 		findPrimes(in->min, in->max, chunkMin, chunkLimit, root, chunk);
 
 		unsigned int outSize = chunk->countUnmarked() + (in->chunkId == 0) ? root->countUnmarked() : 0;
 		//DataMessage* out = new DataMessage(outSize);
 		DataMessage* out = new DataMessage(outSize / 2);
 
-		DEBUG(3);
+		double tPac;
+		VERBOSITY(DEBUG)
+			tPac = dps::Timer::getMillis();
+
 		if (in->chunkId == 0) {
 			for (unsigned int i = root->start; i < root->start + root->length; i++) {
 				if (root->isUnmarked(i)) {
@@ -122,7 +123,6 @@ public:
 		}
 		delete root;
 
-		DEBUG(4);
 		for (unsigned int i = chunk->start; i < chunk->start + chunk->length; i++) {
 			if (chunk->isUnmarked(i)) {
 				out->primes.push_back(i);
@@ -132,7 +132,6 @@ public:
 
 		DEBUG("Sending " << out->primes.size() << " primes.");
 		postDataObject(out);
-		DEBUG(5);
 	}
 
 	void findPrimes(unsigned int min, unsigned int max, unsigned int chunkMin, unsigned int chunkLimit, Range* root, Range* chunk) {
@@ -168,12 +167,18 @@ public:
 		unsigned int primesCount = 0;
 		ostringstream coutbuffer;
 
+		double t0 = getThread()->startTime;
 		do {
+
 			DEBUG("# primes in message: " << in->primes.size());
 			primesCount += in->primes.size();
 
+			// We need to do something with the primes (e.g. save them somewhere). Here we just read them.
+			for (vector<unsigned int>::iterator it = in->primes.begin(); it != in->primes.end(); ++it);
+
 			VERBOSITY(DEBUG)
-				copy(in->primes.begin(), in->primes.end(), ostream_iterator<unsigned int>(coutbuffer, "\n"));
+				if (getController()->getConfig().isSet("printprimes"))
+					copy(in->primes.begin(), in->primes.end(), ostream_iterator<unsigned int>(coutbuffer, "\n"));
 
 		} while ((in = waitForNextDataObject()) != NULL);
 		
