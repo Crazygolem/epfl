@@ -1,17 +1,18 @@
 MACHINEFILE='hosts_up_winmpi.txt'
-NR_MACHINES=11 # Must be > 2 (one master and one slave)
 OUTFILE='communications_rtt.dat'
+NR_MACHINES="11 5 2" # Must be >= 2 (one master and one slave)
 NR_TRIALS=10
 
+# Returns a list of payloads (which might be long)
 getPayloadSizes() {
   minMag=1
   maxMag=7
-  also="0 80000000"
+  also="0 8000000 15000000 20000000 40000000 80000000"
 
-  for p in $(seq $minMag $maxMag); do
-    echo $((10 ** $p))
-    echo $(((10 ** $p) * 5))
-  done
+  # for p in $(seq $minMag $maxMag); do
+  #   echo $((10 ** $p))
+  #   echo $(((10 ** $p) * 5))
+  # done
 
   for p in $also; do
     echo $p
@@ -20,42 +21,44 @@ getPayloadSizes() {
 
 starttest() {
   args="$1"
+  noheader=""
 
-  for payloadSize in $(getPayloadSizes); do
-    trials=$NR_TRIALS
-    nrMachines=$NR_MACHINES
+  for delay in "none" "constant" "random" "distributed"; do
+    echo "Load management delay: $delay"
 
-    if [ $payloadSize -eq 0 ]; then
-      magFactor="0"
-    elif [ $payloadSize -gt 10000000 ]; then
-      # Memory limitations require to use different parameters
-      nrMachines=2 # 1 master, 1 slave
-    fi
+    for payloadSize in $(getPayloadSizes); do
+      echo "  Payload size: $payloadSize"
 
-    nrSlaves=$(($nrMachines - 1))
+      for nrMachines in $NR_MACHINES; do
+        nrSlaves=$(($nrMachines - 1))
+        echo -n "    Number of slaves: $nrSlaves"
+        
+        if [ $payloadSize -gt 10000000 ]; then
+          # Memory limitations require to use different parameters
+          nrMachines=2 # 1 master, 1 slave
+          nrSlaves=1
+          echo " -> $nrSlaves"
+        else
+          echo
+        fi
 
+        
 
-
-    echo "  Payload: $payloadSize"
-    for n in $(seq 1 $trials); do
-      echo "    Trial: $n / $trials"
-      mpiexec -mapall -machinefile $MACHINEFILE -n $nrMachines Test -pat "${nrSlaves}+1" -messages $nrSlaves -payload $payloadSize $args | \
-        head -n 13 | \
-        tail -n +4 >> "$OUTFILE"
-      sleep 2
+        
+        for n in $(seq 1 $NR_TRIALS); do
+          echo "      Trial: $n / $NR_TRIALS"
+          mpiexec -mapall -machinefile $MACHINEFILE -n $nrMachines Test -slaves $nrSlaves -payload $payloadSize -delay $delay $noheader $args | \
+            tail -n +3 | \
+            head -n $(( $nrSlaves + 3 )) >> "$OUTFILE" # `head` to avoid long error messages
+            
+          # After first execution, verbosity set to "quiet" to avoid printing the header line
+          noheader="-noheader"
+          sleep 2
+        done
+      done
     done
   done
 }
 
 rm -f $OUTFILE
-
-echo "payload_size slaves_processing message_id rtt_ms" >> "$OUTFILE"
-
-echo "Slaves computations: None"
 starttest
-echo "Slaves computations: Constant"
-starttest -slaves.constant
-echo "Slaves computations: Random"
-starttest -slaves.random
-echo "Slaves computations: Distributed"
-starttest -slaves.distributed
