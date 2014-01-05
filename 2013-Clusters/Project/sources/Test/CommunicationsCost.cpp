@@ -95,7 +95,7 @@ public:
 
 		do {
 			double now = dps::Timer::getMillis();
-			// Output: payload_size delay num_slaves message_id arrival_rank rtt_ms
+			// Output: payload_size delay num_messages message_id arrival_rank rtt_ms
 			std::cout << payloadSize << " " << delay << " " << numSlaves << " " << in->mid << " " << ++arrivalRank << " " << now - in->timer << std::endl;
 		} while ((in = waitForNextDataObject()) != NULL);
 
@@ -131,7 +131,7 @@ void TestApp::start() {
 
 	int nrMessages = getController()->getConfig().getValue("slaves", 1);
 	if (!getController()->getConfig().isSet("noheader"))
-		std::cout << "payload_size delay num_slaves message_id arrival_rank rtt_ms" << std::endl;
+		std::cout << "payload_size delay num_messages message_id arrival_rank rtt_ms" << std::endl;
 	getController()->callSchedule(graph, new ControlMessage(nrMessages));
 };
 
