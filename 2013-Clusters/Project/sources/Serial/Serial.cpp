@@ -36,10 +36,12 @@ Range* findPrimes(unsigned int min, unsigned int max) {
 	for (unsigned int n = min; n <= srMax; n++) {
 		// We don't process if not a prime
 		// After a pass, the first next uncrossed number is a prime
+		count(n, max);
 		if (ns->isUnmarked(n)) {
 			// Crossing out all multiples of current prime
 			// Numbers smaller than n^2 have already been crossed in previous iterations
 			for (unsigned int k = n * n; k <= max; k += n) {
+				count(k, max);
 				ns->cross(k);
 			}
 		}

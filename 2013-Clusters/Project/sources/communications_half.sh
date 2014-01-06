@@ -1,20 +1,19 @@
 MACHINEFILE='hosts_up_winmpi.txt'
-OUTFILE='communications_rtt.dat'
+OUTFILE='communications_half_rtt.dat'
 
-NR_MACHINES="11 5" # Must be >= 2 (one master and one slave)
+NR_MACHINES="11 5 2" # Must be >= 2 (one master and one slave)
 NR_TRIALS=10
 
 # Returns a list of payloads (which might be long)
 getPayloadSizes() {
-  # minMag=1
-  # maxMag=7
-  # also="0 8000000 15000000 20000000 40000000 80000000"
-  also="80000000 40000000 20000000 15000000"
+  minMag=1
+  maxMag=7
+  also="0 8000000 15000000 20000000 40000000 80000000"
 
-  # for p in $(seq $minMag $maxMag); do
-  #   echo $((10 ** $p))
-  #   echo $(((10 ** $p) * 5))
-  # done
+  for p in $(seq $minMag $maxMag); do
+    echo $((10 ** $p))
+    echo $(((10 ** $p) * 5))
+  done
 
   for p in $also; do
     echo $p
@@ -38,9 +37,7 @@ starttest() {
         # Memory limitations require to use different parameters
         tNrMachines=$nrMachines
         if [ $payloadSize -gt 40000000 ]; then
-          tNrMachines=2 # 1 master, 1 slave
-        elif [ $payloadSize -ge 20000000 ]; then
-          tNrMachines=5
+          tNrMachines=2
         fi
 
         if [ $nrMachines -gt $tNrMachines ]; then
