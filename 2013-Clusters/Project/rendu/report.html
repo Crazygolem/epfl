@@ -1,0 +1,774 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>/* Defaults styles, overridden by those in report.css */
+html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+
+body{
+  color:#444;
+  font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman',
+              "Hiragino Sans GB", "STXihei", "微软雅黑", serif;
+  font-size:12px;
+  line-height:1.5em;
+  background:#fefefe;
+  width: 45em;
+  margin: 10px auto;
+  padding: 1em;
+  outline: 1300px solid #FAFAFA;
+}
+
+a{ color: #0645ad; text-decoration:none;}
+a:visited{ color: #0b0080; }
+a:hover{ color: #06e; }
+a:active{ color:#faa700; }
+a:focus{ outline: thin dotted; }
+a:hover, a:active{ outline: 0; }
+
+span.backtick {
+  border:1px solid #EAEAEA;
+  border-radius:3px;
+  background:#F8F8F8;
+  padding:0 3px 0 3px;
+}
+
+::-moz-selection{background:rgba(255,255,0,0.3);color:#000}
+::selection{background:rgba(255,255,0,0.3);color:#000}
+
+a::-moz-selection{background:rgba(255,255,0,0.3);color:#0645ad}
+a::selection{background:rgba(255,255,0,0.3);color:#0645ad}
+
+p{
+margin:1em 0;
+}
+
+img{
+max-width:100%;
+}
+
+h1,h2,h3,h4,h5,h6{
+font-weight:normal;
+color:#111;
+line-height:1em;
+}
+h4,h5,h6{ font-weight: bold; }
+h1{ font-size:2.5em; }
+h2{ font-size:2em; border-bottom:1px solid silver; padding-bottom: 5px; }
+h3{ font-size:1.5em; }
+h4{ font-size:1.2em; }
+h5{ font-size:1em; }
+h6{ font-size:0.9em; }
+
+blockquote{
+color:#666666;
+margin:0;
+padding-left: 3em;
+border-left: 0.5em #EEE solid;
+}
+hr { display: block; height: 2px; border: 0; border-top: 1px solid #aaa;border-bottom: 1px solid #eee; margin: 1em 0; padding: 0; }
+
+
+pre , code, kbd, samp { 
+  color: #000; 
+  font-family: monospace; 
+  font-size: 0.88em; 
+  border-radius:3px;
+  background-color: #F8F8F8;
+  border: 1px solid #CCC; 
+}
+pre { white-space: pre; white-space: pre-wrap; word-wrap: break-word; padding: 5px 12px;}
+pre code { border: 0px !important; padding: 0;}
+code { padding: 0 3px 0 3px; }
+
+b, strong { font-weight: bold; }
+
+dfn { font-style: italic; }
+
+ins { background: #ff9; color: #000; text-decoration: none; }
+
+mark { background: #ff0; color: #000; font-style: italic; font-weight: bold; }
+
+sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+sup { top: -0.5em; }
+sub { bottom: -0.25em; }
+
+ul, ol { margin: 1em 0; padding: 0 0 0 2em; }
+li p:last-child { margin:0 }
+dd { margin: 0 0 0 2em; }
+
+img { border: 0; -ms-interpolation-mode: bicubic; vertical-align: middle; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+td { vertical-align: top; }
+
+@media only screen and (min-width: 480px) {
+body{font-size:14px;}
+}
+
+@media only screen and (min-width: 768px) {
+body{font-size:16px;}
+}
+
+@media print {
+  * { background: transparent !important; color: black !important; filter:none !important; -ms-filter: none !important; }
+  body{font-size:12pt; max-width:100%; outline:none;}
+  a, a:visited { text-decoration: underline; }
+  hr { height: 1px; border:0; border-bottom:1px solid black; }
+  a[href]:after { content: " (" attr(href) ")"; }
+  abbr[title]:after { content: " (" attr(title) ")"; }
+  .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }
+  pre, blockquote { border: 1px solid #999; padding-right: 1em; page-break-inside: avoid; }
+  tr, img { page-break-inside: avoid; }
+  img { max-width: 100% !important; }
+  @page :left { margin: 15mm 20mm 15mm 10mm; }
+  @page :right { margin: 15mm 10mm 15mm 20mm; }
+  p, h2, h3 { orphans: 3; widows: 3; }
+  h2, h3 { page-break-after: avoid; }
+}
+
+</style><style>body { text-align: justify; font-family: "Droid Serif", "DejaVu Serif", serif;}
+h1, h2, h3, h4, h5, h6 { text-align: left; }
+code { border: none; }
+.footnote { font-size: small; }
+
+/* Tables */
+table { border-collapse: collapse; border-spacing: 0; margin: auto; min-width: 20%; }
+tr { border-bottom: solid 1px; }
+tr:last-child { border-bottom: solid 2px; }
+th:nth-child(even), td:nth-child(even) { background-color: #fafafa; }
+th { padding: 0 0.5em; }
+td { padding: 0 5px; vertical-align: top; }
+
+hr.invisible { clear: both; border: none; }
+
+
+/* Funny stuff is funny */
+blockquote.funquote {
+  border: none;
+  float: right;
+
+  text-align: left;     /* 'justify' might be prettier on long texts */
+  font-style: italic;
+  line-height: 1.1em;
+  color: #a8a8a8;
+
+  transform: rotate(-7deg);
+
+  /* Stuffs for the quotation mark decorations */
+  /* It seems that Firefox only rotates positioned :before and :after elements */
+  position: relative;   /* Makes this block the reference for positioned children */
+  padding-left: 2em;    /* Moves the left quote to the left */
+  padding-right: 2em;   /* Moves the right quote to the right */
+}
+
+blockquote.funquote:before,
+blockquote.funquote:after { position: absolute; font-size: 3em; color: #d9d9d9; transform: rotate(14deg); }
+blockquote.funquote:before { top: 0; left: 0; content: '“'; }
+blockquote.funquote:after { bottom: 0; right: 0; content: '„'; }
+blockquote.funquote.cite:after { bottom: 0.6em; } /* Better effect when the author is cited */
+blockquote.funquote cite { display: block; text-align: right; color: #d9d9d9; margin: 0.5em 0.5em 0 0; }
+blockquote.funquote cite:before { content: '— '; }
+
+blockquote.funquote.doge p { font-family: 'Comic Sans MS'; display: inline-block; width: 100%; margin: 0.5em 0;}
+
+
+/* Only when printing */
+@media print {
+  body {
+    width: auto; /* Fixes rendering issues */ 
+    font-family: "Droid Serif", "DejaVu Serif", serif; /* Ensures serif for printing */
+    font-size: 80%; /* More text on the page */
+  }
+  
+  .footnote { text-align: left; }
+
+  a { text-decoration: none; }
+  .footnote-backref { display: none; }
+
+  blockquote.funquote,
+  blockquote.funquote * { color: #a8a8a8 !important; }
+  blockquote.funquote:before,
+  blockquote.funquote:after,
+  blockquote.funquote cite { color: #d9d9d9 !important; }
+}</style><style>/*
+
+github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+*/
+
+pre code {
+  display: block; padding: 0.5em;
+  color: #333;
+  background: #f8f8ff
+}
+
+pre .comment,
+pre .template_comment,
+pre .diff .header,
+pre .javadoc {
+  color: #998;
+  font-style: italic
+}
+
+pre .keyword,
+pre .css .rule .keyword,
+pre .winutils,
+pre .javascript .title,
+pre .nginx .title,
+pre .subst,
+pre .request,
+pre .status {
+  color: #333;
+  font-weight: bold
+}
+
+pre .number,
+pre .hexcolor,
+pre .ruby .constant {
+  color: #099;
+}
+
+pre .string,
+pre .tag .value,
+pre .phpdoc,
+pre .tex .formula {
+  color: #d14
+}
+
+pre .title,
+pre .id,
+pre .coffeescript .params,
+pre .scss .preprocessor {
+  color: #900;
+  font-weight: bold
+}
+
+pre .javascript .title,
+pre .lisp .title,
+pre .clojure .title,
+pre .subst {
+  font-weight: normal
+}
+
+pre .class .title,
+pre .haskell .type,
+pre .vhdl .literal,
+pre .tex .command {
+  color: #458;
+  font-weight: bold
+}
+
+pre .tag,
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword {
+  color: #000080;
+  font-weight: normal
+}
+
+pre .attribute,
+pre .variable,
+pre .lisp .body {
+  color: #008080
+}
+
+pre .regexp {
+  color: #009926
+}
+
+pre .class {
+  color: #458;
+  font-weight: bold
+}
+
+pre .symbol,
+pre .ruby .symbol .string,
+pre .lisp .keyword,
+pre .tex .special,
+pre .prompt {
+  color: #990073
+}
+
+pre .built_in,
+pre .lisp .title,
+pre .clojure .built_in {
+  color: #0086b3
+}
+
+pre .preprocessor,
+pre .pi,
+pre .doctype,
+pre .shebang,
+pre .cdata {
+  color: #999;
+  font-weight: bold
+}
+
+pre .deletion {
+  background: #fdd
+}
+
+pre .addition {
+  background: #dfd
+}
+
+pre .diff .change {
+  background: #0086b3
+}
+
+pre .chunk {
+  color: #aaa
+}</style><script>var hljs=new function(){function l(o){return o.replace(/&/gm,"&amp;").replace(/</gm,"&lt;").replace(/>/gm,"&gt;")}function b(p){for(var o=p.firstChild;o;o=o.nextSibling){if(o.nodeName=="CODE"){return o}if(!(o.nodeType==3&&o.nodeValue.match(/\s+/))){break}}}function h(p,o){return Array.prototype.map.call(p.childNodes,function(q){if(q.nodeType==3){return o?q.nodeValue.replace(/\n/g,""):q.nodeValue}if(q.nodeName=="BR"){return"\n"}return h(q,o)}).join("")}function a(q){var p=(q.className+" "+q.parentNode.className).split(/\s+/);p=p.map(function(r){return r.replace(/^language-/,"")});for(var o=0;o<p.length;o++){if(e[p[o]]||p[o]=="no-highlight"){return p[o]}}}function c(q){var o=[];(function p(r,s){for(var t=r.firstChild;t;t=t.nextSibling){if(t.nodeType==3){s+=t.nodeValue.length}else{if(t.nodeName=="BR"){s+=1}else{if(t.nodeType==1){o.push({event:"start",offset:s,node:t});s=p(t,s);o.push({event:"stop",offset:s,node:t})}}}}return s})(q,0);return o}function j(x,v,w){var p=0;var y="";var r=[];function t(){if(x.length&&v.length){if(x[0].offset!=v[0].offset){return(x[0].offset<v[0].offset)?x:v}else{return v[0].event=="start"?x:v}}else{return x.length?x:v}}function s(A){function z(B){return" "+B.nodeName+'="'+l(B.value)+'"'}return"<"+A.nodeName+Array.prototype.map.call(A.attributes,z).join("")+">"}while(x.length||v.length){var u=t().splice(0,1)[0];y+=l(w.substr(p,u.offset-p));p=u.offset;if(u.event=="start"){y+=s(u.node);r.push(u.node)}else{if(u.event=="stop"){var o,q=r.length;do{q--;o=r[q];y+=("</"+o.nodeName.toLowerCase()+">")}while(o!=u.node);r.splice(q,1);while(q<r.length){y+=s(r[q]);q++}}}}return y+l(w.substr(p))}function f(q){function o(s,r){return RegExp(s,"m"+(q.cI?"i":"")+(r?"g":""))}function p(y,w){if(y.compiled){return}y.compiled=true;var s=[];if(y.k){var r={};function z(A,t){t.split(" ").forEach(function(B){var C=B.split("|");r[C[0]]=[A,C[1]?Number(C[1]):1];s.push(C[0])})}y.lR=o(y.l||hljs.IR,true);if(typeof y.k=="string"){z("keyword",y.k)}else{for(var x in y.k){if(!y.k.hasOwnProperty(x)){continue}z(x,y.k[x])}}y.k=r}if(w){if(y.bWK){y.b="\\b("+s.join("|")+")\\s"}y.bR=o(y.b?y.b:"\\B|\\b");if(!y.e&&!y.eW){y.e="\\B|\\b"}if(y.e){y.eR=o(y.e)}y.tE=y.e||"";if(y.eW&&w.tE){y.tE+=(y.e?"|":"")+w.tE}}if(y.i){y.iR=o(y.i)}if(y.r===undefined){y.r=1}if(!y.c){y.c=[]}for(var v=0;v<y.c.length;v++){if(y.c[v]=="self"){y.c[v]=y}p(y.c[v],y)}if(y.starts){p(y.starts,w)}var u=[];for(var v=0;v<y.c.length;v++){u.push(y.c[v].b)}if(y.tE){u.push(y.tE)}if(y.i){u.push(y.i)}y.t=u.length?o(u.join("|"),true):{exec:function(t){return null}}}p(q)}function d(D,E){function o(r,M){for(var L=0;L<M.c.length;L++){var K=M.c[L].bR.exec(r);if(K&&K.index==0){return M.c[L]}}}function s(K,r){if(K.e&&K.eR.test(r)){return K}if(K.eW){return s(K.parent,r)}}function t(r,K){return K.i&&K.iR.test(r)}function y(L,r){var K=F.cI?r[0].toLowerCase():r[0];return L.k.hasOwnProperty(K)&&L.k[K]}function G(){var K=l(w);if(!A.k){return K}var r="";var N=0;A.lR.lastIndex=0;var L=A.lR.exec(K);while(L){r+=K.substr(N,L.index-N);var M=y(A,L);if(M){v+=M[1];r+='<span class="'+M[0]+'">'+L[0]+"</span>"}else{r+=L[0]}N=A.lR.lastIndex;L=A.lR.exec(K)}return r+K.substr(N)}function z(){if(A.sL&&!e[A.sL]){return l(w)}var r=A.sL?d(A.sL,w):g(w);if(A.r>0){v+=r.keyword_count;B+=r.r}return'<span class="'+r.language+'">'+r.value+"</span>"}function J(){return A.sL!==undefined?z():G()}function I(L,r){var K=L.cN?'<span class="'+L.cN+'">':"";if(L.rB){x+=K;w=""}else{if(L.eB){x+=l(r)+K;w=""}else{x+=K;w=r}}A=Object.create(L,{parent:{value:A}});B+=L.r}function C(K,r){w+=K;if(r===undefined){x+=J();return 0}var L=o(r,A);if(L){x+=J();I(L,r);return L.rB?0:r.length}var M=s(A,r);if(M){if(!(M.rE||M.eE)){w+=r}x+=J();do{if(A.cN){x+="</span>"}A=A.parent}while(A!=M.parent);if(M.eE){x+=l(r)}w="";if(M.starts){I(M.starts,"")}return M.rE?0:r.length}if(t(r,A)){throw"Illegal"}w+=r;return r.length||1}var F=e[D];f(F);var A=F;var w="";var B=0;var v=0;var x="";try{var u,q,p=0;while(true){A.t.lastIndex=p;u=A.t.exec(E);if(!u){break}q=C(E.substr(p,u.index-p),u[0]);p=u.index+q}C(E.substr(p));return{r:B,keyword_count:v,value:x,language:D}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:l(E)}}else{throw H}}}function g(s){var o={keyword_count:0,r:0,value:l(s)};var q=o;for(var p in e){if(!e.hasOwnProperty(p)){continue}var r=d(p,s);r.language=p;if(r.keyword_count+r.r>q.keyword_count+q.r){q=r}if(r.keyword_count+r.r>o.keyword_count+o.r){q=o;o=r}}if(q.language){o.second_best=q}return o}function i(q,p,o){if(p){q=q.replace(/^((<[^>]+>|\t)+)/gm,function(r,v,u,t){return v.replace(/\t/g,p)})}if(o){q=q.replace(/\n/g,"<br>")}return q}function m(r,u,p){var v=h(r,p);var t=a(r);if(t=="no-highlight"){return}var w=t?d(t,v):g(v);t=w.language;var o=c(r);if(o.length){var q=document.createElement("pre");q.innerHTML=w.value;w.value=j(o,c(q),v)}w.value=i(w.value,u,p);var s=r.className;if(!s.match("(\\s|^)(language-)?"+t+"(\\s|$)")){s=s?(s+" "+t):t}r.innerHTML=w.value;r.className=s;r.result={language:t,kw:w.keyword_count,re:w.r};if(w.second_best){r.second_best={language:w.second_best.language,kw:w.second_best.keyword_count,re:w.second_best.r}}}function n(){if(n.called){return}n.called=true;Array.prototype.map.call(document.getElementsByTagName("pre"),b).filter(Boolean).forEach(function(o){m(o,hljs.tabReplace)})}function k(){window.addEventListener("DOMContentLoaded",n,false);window.addEventListener("load",n,false)}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=m;this.initHighlighting=n;this.initHighlightingOnLoad=k;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.BE={b:"\\\\[\\s\\S]",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(q,r){var o={};for(var p in q){o[p]=q[p]}if(r){for(var p in r){o[p]=r[p]}}return o}}();hljs.LANGUAGES.bash=function(a){var g="true false";var e="if then else elif fi for break continue while in do done echo exit return set declare";var c={cN:"variable",b:"\\$[a-zA-Z0-9_#]+"};var b={cN:"variable",b:"\\${([^}]|\\\\})+}"};var h={cN:"string",b:'"',e:'"',i:"\\n",c:[a.BE,c,b],r:0};var d={cN:"string",b:"'",e:"'",c:[{b:"''"}],r:0};var f={cN:"test_condition",b:"",e:"",c:[h,d,c,b],k:{literal:g},r:0};return{k:{keyword:e,literal:g},c:[{cN:"shebang",b:"(#!\\/bin\\/bash)|(#!\\/bin\\/sh)",r:10},c,b,a.HCM,h,d,a.inherit(f,{b:"\\[ ",e:" \\]",r:0}),a.inherit(f,{b:"\\[\\[ ",e:" \\]\\]"})]}}(hljs);hljs.LANGUAGES.cs=function(a){return{k:"abstract as base bool break byte case catch char checked class const continue decimal default delegate do double else enum event explicit extern false finally fixed float for foreach goto if implicit in int interface internal is lock long namespace new null object operator out override params private protected public readonly ref return sbyte sealed short sizeof stackalloc static string struct switch this throw true try typeof uint ulong unchecked unsafe ushort using virtual volatile void while ascending descending from get group into join let orderby partial select set value var where yield",c:[{cN:"comment",b:"///",e:"$",rB:true,c:[{cN:"xmlDocTag",b:"///|<!--|-->"},{cN:"xmlDocTag",b:"</?",e:">"}]},a.CLCM,a.CBLCLM,{cN:"preprocessor",b:"#",e:"$",k:"if else elif endif define undef warning error line region endregion pragma checksum"},{cN:"string",b:'@"',e:'"',c:[{b:'""'}]},a.ASM,a.QSM,a.CNM]}}(hljs);hljs.LANGUAGES.ruby=function(e){var a="[a-zA-Z_][a-zA-Z0-9_]*(\\!|\\?)?";var j="[a-zA-Z_]\\w*[!?=]?|[-+~]\\@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?";var g={keyword:"and false then defined module in return redo if BEGIN retry end for true self when next until do begin unless END rescue nil else break undef not super class case require yield alias while ensure elsif or include"};var c={cN:"yardoctag",b:"@[A-Za-z]+"};var k=[{cN:"comment",b:"#",e:"$",c:[c]},{cN:"comment",b:"^\\=begin",e:"^\\=end",c:[c],r:10},{cN:"comment",b:"^__END__",e:"\\n$"}];var d={cN:"subst",b:"#\\{",e:"}",l:a,k:g};var i=[e.BE,d];var b=[{cN:"string",b:"'",e:"'",c:i,r:0},{cN:"string",b:'"',e:'"',c:i,r:0},{cN:"string",b:"%[qw]?\\(",e:"\\)",c:i},{cN:"string",b:"%[qw]?\\[",e:"\\]",c:i},{cN:"string",b:"%[qw]?{",e:"}",c:i},{cN:"string",b:"%[qw]?<",e:">",c:i,r:10},{cN:"string",b:"%[qw]?/",e:"/",c:i,r:10},{cN:"string",b:"%[qw]?%",e:"%",c:i,r:10},{cN:"string",b:"%[qw]?-",e:"-",c:i,r:10},{cN:"string",b:"%[qw]?\\|",e:"\\|",c:i,r:10}];var h={cN:"function",bWK:true,e:" |$|;",k:"def",c:[{cN:"title",b:j,l:a,k:g},{cN:"params",b:"\\(",e:"\\)",l:a,k:g}].concat(k)};var f=k.concat(b.concat([{cN:"class",bWK:true,e:"$|;",k:"class module",c:[{cN:"title",b:"[A-Za-z_]\\w*(::\\w+)*(\\?|\\!)?",r:0},{cN:"inheritance",b:"<\\s*",c:[{cN:"parent",b:"("+e.IR+"::)?"+e.IR}]}].concat(k)},h,{cN:"constant",b:"(::)?(\\b[A-Z]\\w*(::)?)+",r:0},{cN:"symbol",b:":",c:b.concat([{b:j}]),r:0},{cN:"symbol",b:a+":",r:0},{cN:"number",b:"(\\b0[0-7_]+)|(\\b0x[0-9a-fA-F_]+)|(\\b[1-9][0-9_]*(\\.[0-9_]+)?)|[0_]\\b",r:0},{cN:"number",b:"\\?\\w"},{cN:"variable",b:"(\\$\\W)|((\\$|\\@\\@?)(\\w+))"},{b:"("+e.RSR+")\\s*",c:k.concat([{cN:"regexp",b:"/",e:"/[a-z]*",i:"\\n",c:[e.BE,d]}]),r:0}]));d.c=f;h.c[1].c=f;return{l:a,k:g,c:f}}(hljs);hljs.LANGUAGES.diff=function(a){return{c:[{cN:"chunk",b:"^\\@\\@ +\\-\\d+,\\d+ +\\+\\d+,\\d+ +\\@\\@$",r:10},{cN:"chunk",b:"^\\*\\*\\* +\\d+,\\d+ +\\*\\*\\*\\*$",r:10},{cN:"chunk",b:"^\\-\\-\\- +\\d+,\\d+ +\\-\\-\\-\\-$",r:10},{cN:"header",b:"Index: ",e:"$"},{cN:"header",b:"=====",e:"=====$"},{cN:"header",b:"^\\-\\-\\-",e:"$"},{cN:"header",b:"^\\*{3} ",e:"$"},{cN:"header",b:"^\\+\\+\\+",e:"$"},{cN:"header",b:"\\*{5}",e:"\\*{5}$"},{cN:"addition",b:"^\\+",e:"$"},{cN:"deletion",b:"^\\-",e:"$"},{cN:"change",b:"^\\!",e:"$"}]}}(hljs);hljs.LANGUAGES.javascript=function(a){return{k:{keyword:"in if for while finally var new function do return void else break catch instanceof with throw case default try this switch continue typeof delete let yield const",literal:"true false null undefined NaN Infinity"},c:[a.ASM,a.QSM,a.CLCM,a.CBLCLM,a.CNM,{b:"("+a.RSR+"|\\b(case|return|throw)\\b)\\s*",k:"return throw case",c:[a.CLCM,a.CBLCLM,{cN:"regexp",b:"/",e:"/[gim]*",i:"\\n",c:[{b:"\\\\/"}]},{b:"<",e:">;",sL:"xml"}],r:0},{cN:"function",bWK:true,e:"{",k:"function",c:[{cN:"title",b:"[A-Za-z$_][0-9A-Za-z$_]*"},{cN:"params",b:"\\(",e:"\\)",c:[a.CLCM,a.CBLCLM],i:"[\"'\\(]"}],i:"\\[|%"}]}}(hljs);hljs.LANGUAGES.css=function(a){var b={cN:"function",b:a.IR+"\\(",e:"\\)",c:[a.NM,a.ASM,a.QSM]};return{cI:true,i:"[=/|']",c:[a.CBLCLM,{cN:"id",b:"\\#[A-Za-z0-9_-]+"},{cN:"class",b:"\\.[A-Za-z0-9_-]+",r:0},{cN:"attr_selector",b:"\\[",e:"\\]",i:"$"},{cN:"pseudo",b:":(:)?[a-zA-Z0-9\\_\\-\\+\\(\\)\\\"\\']+"},{cN:"at_rule",b:"@(font-face|page)",l:"[a-z-]+",k:"font-face page"},{cN:"at_rule",b:"@",e:"[{;]",eE:true,k:"import page media charset",c:[b,a.ASM,a.QSM,a.NM]},{cN:"tag",b:a.IR,r:0},{cN:"rules",b:"{",e:"}",i:"[^\\s]",r:0,c:[a.CBLCLM,{cN:"rule",b:"[^\\s]",rB:true,e:";",eW:true,c:[{cN:"attribute",b:"[A-Z\\_\\.\\-]+",e:":",eE:true,i:"[^\\s]",starts:{cN:"value",eW:true,eE:true,c:[b,a.NM,a.QSM,a.ASM,a.CBLCLM,{cN:"hexcolor",b:"\\#[0-9A-F]+"},{cN:"important",b:"!important"}]}}]}]}]}}(hljs);hljs.LANGUAGES.xml=function(a){var c="[A-Za-z0-9\\._:-]+";var b={eW:true,c:[{cN:"attribute",b:c,r:0},{b:'="',rB:true,e:'"',c:[{cN:"value",b:'"',eW:true}]},{b:"='",rB:true,e:"'",c:[{cN:"value",b:"'",eW:true}]},{b:"=",c:[{cN:"value",b:"[^\\s/>]+"}]}]};return{cI:true,c:[{cN:"pi",b:"<\\?",e:"\\?>",r:10},{cN:"doctype",b:"<!DOCTYPE",e:">",r:10,c:[{b:"\\[",e:"\\]"}]},{cN:"comment",b:"<!--",e:"-->",r:10},{cN:"cdata",b:"<\\!\\[CDATA\\[",e:"\\]\\]>",r:10},{cN:"tag",b:"<style(?=\\s|>|$)",e:">",k:{title:"style"},c:[b],starts:{e:"</style>",rE:true,sL:"css"}},{cN:"tag",b:"<script(?=\\s|>|$)",e:">",k:{title:"script"},c:[b],starts:{e:"<\/script>",rE:true,sL:"javascript"}},{b:"<%",e:"%>",sL:"vbscript"},{cN:"tag",b:"</?",e:"/?>",c:[{cN:"title",b:"[^ />]+"},b]}]}}(hljs);hljs.LANGUAGES.http=function(a){return{i:"\\S",c:[{cN:"status",b:"^HTTP/[0-9\\.]+",e:"$",c:[{cN:"number",b:"\\b\\d{3}\\b"}]},{cN:"request",b:"^[A-Z]+ (.*?) HTTP/[0-9\\.]+$",rB:true,e:"$",c:[{cN:"string",b:" ",e:" ",eB:true,eE:true}]},{cN:"attribute",b:"^\\w",e:": ",eE:true,i:"\\n|\\s|=",starts:{cN:"string",e:"$"}},{b:"\\n\\n",starts:{sL:"",eW:true}}]}}(hljs);hljs.LANGUAGES.java=function(a){return{k:"false synchronized int abstract float private char boolean static null if const for true while long throw strictfp finally protected import native final return void enum else break transient new catch instanceof byte super volatile case assert short package default double public try this switch continue throws",c:[{cN:"javadoc",b:"/\\*\\*",e:"\\*/",c:[{cN:"javadoctag",b:"@[A-Za-z]+"}],r:10},a.CLCM,a.CBLCLM,a.ASM,a.QSM,{cN:"class",bWK:true,e:"{",k:"class interface",i:":",c:[{bWK:true,k:"extends implements",r:10},{cN:"title",b:a.UIR}]},a.CNM,{cN:"annotation",b:"@[A-Za-z]+"}]}}(hljs);hljs.LANGUAGES.php=function(a){var e={cN:"variable",b:"\\$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*"};var b=[a.inherit(a.ASM,{i:null}),a.inherit(a.QSM,{i:null}),{cN:"string",b:'b"',e:'"',c:[a.BE]},{cN:"string",b:"b'",e:"'",c:[a.BE]}];var c=[a.BNM,a.CNM];var d={cN:"title",b:a.UIR};return{cI:true,k:"and include_once list abstract global private echo interface as static endswitch array null if endwhile or const for endforeach self var while isset public protected exit foreach throw elseif include __FILE__ empty require_once do xor return implements parent clone use __CLASS__ __LINE__ else break print eval new catch __METHOD__ case exception php_user_filter default die require __FUNCTION__ enddeclare final try this switch continue endfor endif declare unset true false namespace trait goto instanceof insteadof __DIR__ __NAMESPACE__ __halt_compiler",c:[a.CLCM,a.HCM,{cN:"comment",b:"/\\*",e:"\\*/",c:[{cN:"phpdoc",b:"\\s@[A-Za-z]+"}]},{cN:"comment",eB:true,b:"__halt_compiler.+?;",eW:true},{cN:"string",b:"<<<['\"]?\\w+['\"]?$",e:"^\\w+;",c:[a.BE]},{cN:"preprocessor",b:"<\\?php",r:10},{cN:"preprocessor",b:"\\?>"},e,{cN:"function",bWK:true,e:"{",k:"function",i:"\\$|\\[|%",c:[d,{cN:"params",b:"\\(",e:"\\)",c:["self",e,a.CBLCLM].concat(b).concat(c)}]},{cN:"class",bWK:true,e:"{",k:"class",i:"[:\\(\\$]",c:[{bWK:true,eW:true,k:"extends",c:[d]},d]},{b:"=>"}].concat(b).concat(c)}}(hljs);hljs.LANGUAGES.python=function(a){var f={cN:"prompt",b:"^(>>>|\\.\\.\\.) "};var c=[{cN:"string",b:"(u|b)?r?'''",e:"'''",c:[f],r:10},{cN:"string",b:'(u|b)?r?"""',e:'"""',c:[f],r:10},{cN:"string",b:"(u|r|ur)'",e:"'",c:[a.BE],r:10},{cN:"string",b:'(u|r|ur)"',e:'"',c:[a.BE],r:10},{cN:"string",b:"(b|br)'",e:"'",c:[a.BE]},{cN:"string",b:'(b|br)"',e:'"',c:[a.BE]}].concat([a.ASM,a.QSM]);var e={cN:"title",b:a.UIR};var d={cN:"params",b:"\\(",e:"\\)",c:["self",a.CNM,f].concat(c)};var b={bWK:true,e:":",i:"[${=;\\n]",c:[e,d],r:10};return{k:{keyword:"and elif is global as in if from raise for except finally print import pass return exec else break not with class assert yield try while continue del or def lambda nonlocal|10",built_in:"None True False Ellipsis NotImplemented"},i:"(</|->|\\?)",c:c.concat([f,a.HCM,a.inherit(b,{cN:"function",k:"def"}),a.inherit(b,{cN:"class",k:"class"}),a.CNM,{cN:"decorator",b:"@",e:"$"},{b:"\\b(print|exec)\\("}])}}(hljs);hljs.LANGUAGES.sql=function(a){return{cI:true,c:[{cN:"operator",b:"(begin|start|commit|rollback|savepoint|lock|alter|create|drop|rename|call|delete|do|handler|insert|load|replace|select|truncate|update|set|show|pragma|grant)\\b(?!:)",e:";",eW:true,k:{keyword:"all partial global month current_timestamp using go revoke smallint indicator end-exec disconnect zone with character assertion to add current_user usage input local alter match collate real then rollback get read timestamp session_user not integer bit unique day minute desc insert execute like ilike|2 level decimal drop continue isolation found where constraints domain right national some module transaction relative second connect escape close system_user for deferred section cast current sqlstate allocate intersect deallocate numeric public preserve full goto initially asc no key output collation group by union session both last language constraint column of space foreign deferrable prior connection unknown action commit view or first into float year primary cascaded except restrict set references names table outer open select size are rows from prepare distinct leading create only next inner authorization schema corresponding option declare precision immediate else timezone_minute external varying translation true case exception join hour default double scroll value cursor descriptor values dec fetch procedure delete and false int is describe char as at in varchar null trailing any absolute current_time end grant privileges when cross check write current_date pad begin temporary exec time update catalog user sql date on identity timezone_hour natural whenever interval work order cascade diagnostics nchar having left call do handler load replace truncate start lock show pragma exists number",aggregate:"count sum min max avg"},c:[{cN:"string",b:"'",e:"'",c:[a.BE,{b:"''"}],r:0},{cN:"string",b:'"',e:'"',c:[a.BE,{b:'""'}],r:0},{cN:"string",b:"`",e:"`",c:[a.BE]},a.CNM]},a.CBLCLM,{cN:"comment",b:"--",e:"$"}]}}(hljs);hljs.LANGUAGES.ini=function(a){return{cI:true,i:"[^\\s]",c:[{cN:"comment",b:";",e:"$"},{cN:"title",b:"^\\[",e:"\\]"},{cN:"setting",b:"^[a-z0-9\\[\\]_-]+[ \\t]*=[ \\t]*",e:"$",c:[{cN:"value",eW:true,k:"on off true false yes no",c:[a.QSM,a.NM]}]}]}}(hljs);hljs.LANGUAGES.perl=function(e){var a="getpwent getservent quotemeta msgrcv scalar kill dbmclose undef lc ma syswrite tr send umask sysopen shmwrite vec qx utime local oct semctl localtime readpipe do return format read sprintf dbmopen pop getpgrp not getpwnam rewinddir qqfileno qw endprotoent wait sethostent bless s|0 opendir continue each sleep endgrent shutdown dump chomp connect getsockname die socketpair close flock exists index shmgetsub for endpwent redo lstat msgctl setpgrp abs exit select print ref gethostbyaddr unshift fcntl syscall goto getnetbyaddr join gmtime symlink semget splice x|0 getpeername recv log setsockopt cos last reverse gethostbyname getgrnam study formline endhostent times chop length gethostent getnetent pack getprotoent getservbyname rand mkdir pos chmod y|0 substr endnetent printf next open msgsnd readdir use unlink getsockopt getpriority rindex wantarray hex system getservbyport endservent int chr untie rmdir prototype tell listen fork shmread ucfirst setprotoent else sysseek link getgrgid shmctl waitpid unpack getnetbyname reset chdir grep split require caller lcfirst until warn while values shift telldir getpwuid my getprotobynumber delete and sort uc defined srand accept package seekdir getprotobyname semop our rename seek if q|0 chroot sysread setpwent no crypt getc chown sqrt write setnetent setpriority foreach tie sin msgget map stat getlogin unless elsif truncate exec keys glob tied closedirioctl socket readlink eval xor readline binmode setservent eof ord bind alarm pipe atan2 getgrent exp time push setgrent gt lt or ne m|0 break given say state when";var d={cN:"subst",b:"[$@]\\{",e:"\\}",k:a,r:10};var b={cN:"variable",b:"\\$\\d"};var i={cN:"variable",b:"[\\$\\%\\@\\*](\\^\\w\\b|#\\w+(\\:\\:\\w+)*|[^\\s\\w{]|{\\w+}|\\w+(\\:\\:\\w*)*)"};var f=[e.BE,d,b,i];var h={b:"->",c:[{b:e.IR},{b:"{",e:"}"}]};var g={cN:"comment",b:"^(__END__|__DATA__)",e:"\\n$",r:5};var c=[b,i,e.HCM,g,{cN:"comment",b:"^\\=\\w",e:"\\=cut",eW:true},h,{cN:"string",b:"q[qwxr]?\\s*\\(",e:"\\)",c:f,r:5},{cN:"string",b:"q[qwxr]?\\s*\\[",e:"\\]",c:f,r:5},{cN:"string",b:"q[qwxr]?\\s*\\{",e:"\\}",c:f,r:5},{cN:"string",b:"q[qwxr]?\\s*\\|",e:"\\|",c:f,r:5},{cN:"string",b:"q[qwxr]?\\s*\\<",e:"\\>",c:f,r:5},{cN:"string",b:"qw\\s+q",e:"q",c:f,r:5},{cN:"string",b:"'",e:"'",c:[e.BE],r:0},{cN:"string",b:'"',e:'"',c:f,r:0},{cN:"string",b:"`",e:"`",c:[e.BE]},{cN:"string",b:"{\\w+}",r:0},{cN:"string",b:"-?\\w+\\s*\\=\\>",r:0},{cN:"number",b:"(\\b0[0-7_]+)|(\\b0x[0-9a-fA-F_]+)|(\\b[1-9][0-9_]*(\\.[0-9_]+)?)|[0_]\\b",r:0},{b:"("+e.RSR+"|\\b(split|return|print|reverse|grep)\\b)\\s*",k:"split return print reverse grep",r:0,c:[e.HCM,g,{cN:"regexp",b:"(s|tr|y)/(\\\\.|[^/])*/(\\\\.|[^/])*/[a-z]*",r:10},{cN:"regexp",b:"(m|qr)?/",e:"/[a-z]*",c:[e.BE],r:0}]},{cN:"sub",bWK:true,e:"(\\s*\\(.*?\\))?[;{]",k:"sub",r:5},{cN:"operator",b:"-\\w\\b",r:0}];d.c=c;h.c[1].c=c;return{k:a,c:c}}(hljs);hljs.LANGUAGES.json=function(a){var e={literal:"true false null"};var d=[a.QSM,a.CNM];var c={cN:"value",e:",",eW:true,eE:true,c:d,k:e};var b={b:"{",e:"}",c:[{cN:"attribute",b:'\\s*"',e:'"\\s*:\\s*',eB:true,eE:true,c:[a.BE],i:"\\n",starts:c}],i:"\\S"};var f={b:"\\[",e:"\\]",c:[a.inherit(c,{cN:null})],i:"\\S"};d.splice(d.length,0,b,f);return{c:d,k:e,i:"\\S"}}(hljs);hljs.LANGUAGES.cpp=function(a){var b={keyword:"false int float while private char catch export virtual operator sizeof dynamic_cast|10 typedef const_cast|10 const struct for static_cast|10 union namespace unsigned long throw volatile static protected bool template mutable if public friend do return goto auto void enum else break new extern using true class asm case typeid short reinterpret_cast|10 default double register explicit signed typename try this switch continue wchar_t inline delete alignof char16_t char32_t constexpr decltype noexcept nullptr static_assert thread_local restrict _Bool complex",built_in:"std string cin cout cerr clog stringstream istringstream ostringstream auto_ptr deque list queue stack vector map set bitset multiset multimap unordered_set unordered_map unordered_multiset unordered_multimap array shared_ptr"};return{k:b,i:"</",c:[a.CLCM,a.CBLCLM,a.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},a.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:b,r:10,c:["self"]}]}}(hljs);
+</script><script>hljs.initHighlightingOnLoad();</script><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+<script>
+MathJax.Hub.Config({
+  config: ["MMLorHTML.js"],
+  extensions: ["tex2jax.js"],
+  jax: ["input/TeX"],
+  tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    processEscapes: false
+  },
+  TeX: {
+    extensions: ["AMSmath.js", "AMSsymbols.js"],
+    TagSide: "right",
+    TagIndent: ".8em",
+    MultLineWidth: "85%",
+    equationNumbers: {
+      autoNumber: "AMS",
+    },
+    unicode: {
+      fonts: "STIXGeneral,'Arial Unicode MS'"
+    }
+  },
+  showProcessingMessages: false
+});
+</script>
+<title>report</title></head><body><h1 id="project-sieve-of-eratosthenes-parallelized-with-dps">Project — Sieve of Eratosthenes parallelized with DPS</h1>
+<blockquote class="funquote cite">
+  Move 'ZIG'.<br/>
+  For great justice.
+  <cite>Captain</cite>
+</blockquote>
+
+<p>Course: Program parallelization on clusters of PCs<br />
+Author: Jeremiah Menétrey<br />
+Due date: Jan. 1, 2014</p>
+<hr class="invisible" />
+
+<h2 id="description-of-the-application">Description of the application</h2>
+<p>The sieve of Eratosthenes is an classic algorithm to find prime numbers up to a given integer. The algorithm works as follows:</p>
+<p>Given a list of unmarked integers $[2..L]$:<br />
+1. Find $n$, the next unmarked number in the list<br />
+2. Mark all multiples of $n$, except for $n$ itself<br />
+3. Repeat <em>1-2</em> until all numbers up to $\sqrt{L}$ have been processed<br />
+4. The numbers left unmarked in the list are prime numbers</p>
+<h3 id="algorithmic-complexity">Algorithmic complexity</h3>
+<p>The complexity of the algorithm depends on $L$ and the number of primes in the list up to $\sqrt{L}$. It can be proved that the actual complexity is $O(n \log \log n)$, as the prime harmonic series asymptotically approaches $\log \log n$.<sup id="fnref:algoComplexity"><a class="footnote-ref" href="#fn:algoComplexity" rel="footnote">1</a></sup></p>
+<h3 id="achievable-speedup-amdahls-law">Achievable speedup (Amdahl's Law)</h3>
+<p>The maximum achievable speedup for an application where a fraction $f$ cannot be parallelized is</p>
+<p>$$S_p = \frac{t_s}{t_p} \leq \frac{1}{f + \frac{1 - f}{p}} = \frac{p}{1 + (p - 1) f}$$</p>
+<p>Serial part of the application:</p>
+<ul>
+<li>Initializing the list of approx. $L$ numbers, i.e. looping once over the list;</li>
+<li>Retrieving the primes found by the sieve, which is also done with one loop over the list.</li>
+</ul>
+<p>The actual sieving is considered parallelizable, and consists of $\sqrt{L}$ loops over the list of numbers. So we have $f = \frac{2}{\sqrt{L}}$ and therefore</p>
+<p>$$S_p \leq \frac{1}{\frac{2}{\sqrt{L}} + \frac{1 - \frac{2}{\sqrt{L}}}{p}} = \frac{p}{1 + (p - 1) \frac{2}{\sqrt{L}}} = \frac{p \sqrt{L}}{2p + \sqrt{L} - 2}$$</p>
+<p>The formula shows that the speedup grows as we add CPUs and increase the size of the list. See the annex for graphs that show the achievable speedup with varying number of processors $p$ and limit of the list $L$. The dependency between those two factors and the limit of the achievable speedup are clearly visible.</p>
+<h2 id="parallelization-strategies">Parallelization strategies</h2>
+<p>In this section, it is assumed that every process has a unique ID (called <em>pid</em>) and every process knowns its own ID as well as the IDs of all other processes (so they also know the number of processes).<br />
+The number of processes is denoted $p$, and processes <em>pid</em> is within the range $[1..p]$. There might also be a <em>master</em> process, which is not counted in $p$ and has the <em>pid</em> $0$.</p>
+<p>All strategies below use the fact that chunks of the list of candidate primes need not to be sent over the network. It is sufficient to communicate the upper limit $L$ of the original list, the size of the chunks $S$ or both, to be able to build locally a representation of the chunk with the correct bounds, using the <em>pid</em> of the process. Except if stated otherwise, when the communication of a chunk is implied, $L$, the size of the chunks or both are actually sent over the network, depending on the situation.</p>
+<h3 id="first-strategy-the-easy-one">First strategy: The easy one</h3>
+<p>The master process computes the primes up to $\sqrt{L}$. Every time it finds a prime, it broadcasts it to all the slaves. When done, it broadcasts a special FIN message indicating that it has finished.</p>
+<p>The slaves are each responsible of a different chunk of the candidate primes. When a slave receives a prime from the master, it marks all the multiples of that prime in its chunk. When it receives the FIN message, the slave collects all unmarked numbers (i.e. all primes) in its chunk and sends them back to the master.</p>
+<p>It must be noted that the master is actually doing a sieving with an upper limit of $\sqrt{L}$, which means that it can stop the sieving after reaching $\sqrt[4]{L}$ and still find all primes up to $\sqrt{L}$.</p>
+<h4 id="discussing-the-strategy">Discussing the strategy</h4>
+<p>This strategy is very simple and still might achieve good results by letting the master process handle a small portion of the list while allowing to parallelize the processing of the big portion.</p>
+<p>This technique scales very well for the portion of the list greater than $\sqrt{L}$. In facts, for a given $L$, the size of the chunk processed by each slave is inversely proportional to the number of slaves. In the extreme case where there are $L - \lfloor \sqrt{L} \rfloor$ slaves (i.e. one slave for each number greater than $\sqrt{L}$), the limiting factor will be given by the rate at which the master will broadcast new primes, which is not parallelized with this strategy.</p>
+<p>The downside of this strategy is the memory limitation: If there are not enough slaves to hold the entire second portion of the list, the algorithm won't work as-is. Caching the primes sent by the master might be a way to overcome the limitation, however the benefits of the on-the-fly sieving (sieving a chunk while the master continuously sends new primes) would not be applicable for all chunks after the first $p$ ones.</p>
+<h5 id="computational-complexity">Computational complexity</h5>
+<p>Let $k$ be the number of primes up to $\sqrt{L}$. The prime counting function<sup id="fnref:primeCountingFunction"><a class="footnote-ref" href="#fn:primeCountingFunction" rel="footnote">2</a></sup> $\pi(n)$ gives the number of primes up to $n$, so we have the relation $k = \pi(L)$.</p>
+<ul>
+<li>Each slave will be handling a chunk of size $S = L/p$, and therefore will be performing $k$ loops over $S$ elements. So the parallel computation time is $k(L / p)$.</li>
+<li>The master will send $kp$ messages (broadcasting the primes) and receive $p$ messages (the primes found by the slaves), amounting to a total of $p(k+1)$ messages.</li>
+<li>Computation/Communication ratio: $\frac{kL}{(k+1)p^2} = O(L / p^2)$.</li>
+</ul>
+<p>The ratio increases linearly with the number of candidate primes, but decreases quadratically with the number of CPUs. This means that for a fixed $L$, the number of CPUs has a highly negative impact, but for a fixed number of CPUs, the size of the list is neutral.</p>
+<h5 id="dps-flow-graph">DPS flow graph</h5>
+<p><img alt="DPS Flow graph for the first strategy" src="/images/dps-flow_strat1.svg" /></p>
+<p><img alt="[C]" src="/images/dps-flow_data-c.svg" /> A dummy control message signaling the start or the end of the sieving.<br />
+<img alt="[S]" src="/images/dps-flow_data-s.svg" /> Contains a list of primes and optionally the <em>FIN</em> signal.<br />
+<img alt="[D]" src="/images/dps-flow_data-d.svg" /> Contains an <em>ACK</em> signal and optionally a list of primes.</p>
+<p>The <code>Sieve</code> operation performed by the master is done in the same process as the <code>Split</code> and <code>Merge</code> operations, but in another thread. This allows DPS to optimize the communication between the <code>Sieve</code> and the <code>Split</code> operation, by not actually sending a message but rather sharing memory.</p>
+<p>As DPS requires that each message sent through the <code>Split</code> generates a message received by the <code>Merge</code>, the slave processes must send an acknowledgment message to the merge, even if they are not able to send the list of primes in their chunk yet.</p>
+<p>When the master sends the last prime to the slaves, it signals that there are no more primes coming by setting the <em>FIN</em> flag. When slaves have done processing their chunk with the last primes, they send the <em>ACK</em> message with a list of all the primes they found.</p>
+<p>The master does the sieving up to $\sqrt{L}$ in the <code>Split</code> operation and collects the primes from the slaves in the <code>Merge</code>.</p>
+<h3 id="second-strategy-incremental-sieve">Second strategy: Incremental sieve</h3>
+<p>This strategy leads to a parallel incremental sieve, where each process is responsible for a chunk of the whole list (which might then theoretically be infinite).</p>
+<p>The strategy involves a turn-based approach, where at step $i$ the process responsible of the $i$-th chunk <strong>finishes</strong> that chunk, i.e. it finds all remaining primes in it.</p>
+<p>At step $i$ process with <em>pid</em> $i$ performs the finishing sieve on its chunk then broadcasts the newly found primes to all other processes, which perform the sieve on their own chunk using the broadcast primes. Then at step $i+1$, process $i+1$ finishes its own chunk. Again, it broadcasts the newly found primes and all other processes perform the sieve on their own chunk with the primes found by process $i+1$. And so on...</p>
+<p>Additionally, each process keeps the whole list of primes found so far, including those broadcast by other processes (which actually amounts to a kind of <em>shared</em> list of primes). This allows each process to start processing a new chunk as soon as it finishes its current chunk. A new chunk is first sieved using the shared list of primes, then the normal processing can resume. When process $p$ finishes his chunk, process $1$ can continue (as if it were the process $p+1$).</p>
+<p>If the list of candidate primes is bounded (i.e. there is an upper limit $L$), the algorithm stops after the chunk $l$ that contains $\sqrt{L}$ is finished. When process <em>pid</em> $l$ finishes, it sends the new primes to other processes, which then perform the sieve using the new primes found by process $l$ on all their remaining chunks (i.e. without communication). When done, all processes send the primes they found in that last big round (over several chunks at once) to the master.</p>
+<p>Finally, the master process with <em>pid</em> $0$ is only responsible for initiating the sieve, by broadcasting the initial conditions to all other processes, such as the limit $L$, an initial list of primes and the lower bound for the sieve (which is actually the upper bound $L$ of the initial list of primes), the size of the chunks, the number of processes, and other parameters if needed. If the list of candidate primes is unbounded, process $0$ can also be responsible of occasionally collecting the shared list of primes to save it or display it to the client.</p>
+<p>Aside from communications from and to process $0$, which are negligible, this strategy requires only the communication of newly found primes to all processes (the broadcast that updates the shared list of primes), which happens once for every chunk.</p>
+<p>If we imagine the setting as a pipeline, it would be a five-stage pipeline with the following stages:</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Update</td>
+<td>Receive new primes and update list</td>
+</tr>
+<tr>
+<td>Sieve I</td>
+<td>Sieve chunk using updated primes</td>
+</tr>
+<tr>
+<td>Sieve II</td>
+<td>Sieve chunk for new primes</td>
+</tr>
+<tr>
+<td>Broadcast</td>
+<td>Broadcast newly found primes</td>
+</tr>
+<tr>
+<td>Sieve III</td>
+<td>Sieve new chunk using list</td>
+</tr>
+</tbody>
+</table>
+<p>Stages <em>Sieve II</em>, <em>Broadcast</em> and <em>Sieve III</em> are only performed by a process when it is its turn to finish a chunk. Non-finishing processes only perform the <em>Update</em> and <em>Sieve I</em> stages before exiting the pipeline.<br />
+Additionally, it must be noted that the <em>Update</em> and <em>Broadcast</em> stages must happen at the same time, i.e. all non-finishing processes must be in the <em>Update</em> stage when the finishing one is in the <em>Broadcast</em> stage.<br />
+Finally, it can be noted that this design allows for the <em>Sieve III</em> stage to take up to the time needed for <em>Sieve I</em> and <em>Sieve II</em> combined, which might be useful as <em>Sieve III</em> actually does the same operation as <em>Sieve I</em> except that it uses all primes found so far instead of only the primes of the last update.<br />
+However, since the pipeline is only conceptual, it is also possible to relax the <em>Sieve III</em> stage by merging it with followings <em>Update</em> and <em>Sieve I</em> while buffering incoming broadcasts.</p>
+<h4 id="discussing-the-strategy_1">Discussing the strategy</h4>
+<p>This strategy is more involved than the first one and requires that processes are synchronized in order to implement the pipelined setting as described above. Hopefully, the synchronization is easily done using the communication stages <em>Update</em> and <em>Broadcast</em>.</p>
+<p>The strategy distributes the serial part of the algorithm over several processes, which might hinder performances as the serial part is interleaving with communications in order to change round (in terms of the first strategy, it is like switching the role of <em>master</em> to another process).</p>
+<p>The clear advantage of this strategy over the first one is that it allows to continue sieving as long as the available memory and the implementation allow to represent numbers the application has to deal with. Another advantage in the bounded version is that if the number of processes is limited and $L$ is very big, this strategy will gracefully handle all the numbers while the first strategy will hit memory limitations (as each slave has to handle a chunk of size $(L - \sqrt{L}) / p$) as it has to finishes in one "round". In this strategy, the chunks size is limited, e.g. to the maximum memory available, and the number of rounds is flexible.</p>
+<p>On the communications side, their number is comparable to that of the first strategy in terms of number of sent primes, and even less if we count the number of messages: unlike the first strategy, where the master sends a message for at least each prime up to $\sqrt[4]{L}$, in this strategy a message is sent only once for each finished chunk.</p>
+<h5 id="computational-complexity_1">Computational complexity</h5>
+<p>The bounded version of the strategy is used to formulate its computational complexity.</p>
+<p>Again, let $k = \pi(\sqrt{L})$ the number of primes up to the square root of the bound $L$. The number of rounds is $r = \sqrt{L} / S + 1$. The size of the chunks $S$ is arbitrary and the number of chunks $s = L/S$. $l$ is the chunk that contains $\sqrt{L}$, i.e. $l = \sqrt{L} / S$, and by extension the number of the round in which chunk $l$ is finished.</p>
+<ul>
+<li>Each process will have to loop at most $k$ times over each of their chunk. The parallel computation time is therefore $ksS = kL$. Note that $k = O(\sqrt{L})$.</li>
+<li>Each process will send one message per chunk, up to chunk $l$. Then each process will send one message to the master. The total number of messages is therefore $l + p = p + \sqrt{L} / S$.</li>
+<li>The Computation/Communication ratio is therefore: $\frac{kL}{p + \sqrt{L} / S} = O(L^{1.5} / p)$.</li>
+</ul>
+<p>This strategy is much more efficient than the first one in terms of computational complexity, as the ratio decreases only linearly with the number of CPUs but grows better than linearly with the number of candidate primes. The communications have much less impact with this strategy.</p>
+<h5 id="dps-flow-graph_1">DPS flow graph</h5>
+<p><img alt="DPS Flow graph for the second strategy" src="/images/dps-flow_strat2.svg" /></p>
+<p><img alt="[C]" src="/images/dps-flow_data-c.svg" /> A dummy control message signaling the start or the end of the sieving.<br />
+<img alt="[S]" src="/images/dps-flow_data-s.svg" /> Signals to the slaves that they can start the sieving. May contain an initial list of primes and other parameters.<br />
+<img alt="[D]" src="/images/dps-flow_data-d.svg" /> Signals to the master that a slave finished the sieving. Contains a list of primes.<br />
+<img alt="[U]" src="/images/dps-flow_data-u.svg" /> New primes broadcast to all slaves by the one that finished its chunk.<br />
+<img alt="[A]" src="/images/dps-flow_data-a.svg" /> Dummy acknowledgment message used to terminate the broadcast.</p>
+<p>Pairs of <em>Sieve</em> and <em>Update</em> operations have to be implemented within a same operating system process as they both have to access the local instance of the shared list of primes (<em>Update</em> writes to that list, while <em>Sieve</em> reads from it).</p>
+<p>The <em>broadcast</em> stage is implemented with a <code>Split</code> operation, which is done only by the process that finishes its chunk. A <img alt="[U]" src="/images/dps-flow_data-u.svg" /> message is sent to all processes, which update their local instance of the shared list of primes (<em>update</em> stage) and send back an acknowledgment message in order to terminate the broadcast with the <code>Merge</code> operation (a DPS requirement). When the broadcast is done, the broadcasting process can continue the sieving as described in the strategy above.</p>
+<p>In the unbounded version of the strategy, it is desired that the master occasionally collects primes found so far. In order to achieve this, flow control is used between the master <code>Split</code> and <code>Merge</code> operations, which allows to send several <img alt="[S]" src="/images/dps-flow_data-s.svg" /> messages to the slaves, which in turn can send several <img alt="[D]" src="/images/dps-flow_data-d.svg" /> messages to the master with the primes found so far (or actually the primes found since the last <img alt="[D]" src="/images/dps-flow_data-d.svg" /> message was sent). In the bounded version, the master sends only one <img alt="[S]" src="/images/dps-flow_data-s.svg" /> to each slave, and the slaves send only one <img alt="[D]" src="/images/dps-flow_data-d.svg" /> message when the whole sieving is done (in which case flow control is not needed).</p>
+<h3 id="third-strategy-almost-no-communication">Third strategy: Almost no communication</h3>
+<p>Each process is assigned a chunk of the list after $\sqrt{L}$. This can be done deterministically without communications.</p>
+<p>Then each process performs the sieving up to $\sqrt{L}$, while also crossing-out the numbers in their respective chunk.</p>
+<p>Finally, a <em>master</em> process gather all primes found by the other processes. The master can be one of the processes that performed the sieving.</p>
+<h4 id="discussing-the-strategy_2">Discussing the strategy</h4>
+<p>This strategy is a variation of the first one which minimizes the amount of communications. If the density of primes among candidate primes is such that the communication time exceeds the computation time to find a given amount of primes, e.g. when starting the sieving from $2$ or $3$, reducing the amount of communications is more beneficial than trying to parallelize every bit of the program.</p>
+<p>Part of the processing in this strategy is done by every node, which wastes resources, but this allows to reduce the amount of communications. It could also be possible to use one process to sieve the numbers up to $\sqrt{L}$, which would allow other processes to idle and therefore be available for unrelated processing, or they could also idle and consume less power, but then more communications would be required, although a more manageable amount than for the first strategy.</p>
+<h4 id="computational-complexity_2">Computational complexity</h4>
+<p>Let $k = \pi(\sqrt{L})$ as defined previously.</p>
+<ul>
+<li>Each process will be handling a list of number composed by the numbers up to $\sqrt{L}$ and their respective chunk, which is of size $\frac{L - \sqrt{L}}{p}$ and they will therefore perform $k$ loops over $\frac{L - \sqrt{L}}{p} + \sqrt{L}$ numbers.</li>
+<li>The only communications are those required to send the list of found primes to the master. Using a scenario where the master is not one of the processing node, only $p$ messages are sent.</li>
+<li>Computation/Communication ratio: $O(\frac{k (L - \sqrt{L} (p - 1))}{p^2})$. If we assume that $p &lt;&lt; \sqrt{L}$, then the ratio becomes $O(\frac{kL}{p^2}) = O(\frac{L^{1.5}}{p^2})$.</li>
+</ul>
+<h4 id="dps-flow-graph_2">DPS flow graph</h4>
+<p><img alt="DPS Flow graph for the first strategy" src="/images/dps-flow_strat3.svg" /></p>
+<p><img alt="[C]" src="/images/dps-flow_data-c.svg" /> A dummy control message signaling the start or the end of the sieving.<br />
+<img alt="[D]" src="/images/dps-flow_data-d.svg" /> Contains a list of found primes.</p>
+<p>The <em>master</em> sends a dummy message to all processes, making them start the sieving. When a process finishes its sieving, it sends the list of found primes back to the <em>master</em>. The master merges primes found by all the processes and terminates the program by sending a <img alt="[C]" src="/images/dps-flow_data-c.svg" /> message.</p>
+<h2 id="detailed-theoretical-analysis">Detailed theoretical analysis</h2>
+<p>In order to analyze the strategies, computations and communications times were measured. Computations time is measured by running an implementation of the serial algorithm several times with different upper limit values, and to measure communications time a simple parallel DPS program was created, which measures the RTT of messages sent with different payloads from a master thread to slave threads (<code>Split</code>-<code>Process</code>-<code>Merge</code> flow, with the <code>Process</code> operation handled by distinct threads and actually just sending back the input message to the master).</p>
+<p>For computations time, it was found that the processing time is linearly dependent on the number of primes or the number of candidate primes (the number of primes being almost linearly dependent on the number of candidate primes).</p>
+<p>For communications time, it was also found that after a threshold on the payload size, the communication time over the size of the payload was approximatively constant.</p>
+<p>The theoretical analysis below is made assuming those two observations hold in the general case. The values found empirically are approximatively:</p>
+<ul>
+<li>Processing time: 6.4e-6 ms for each candidate prime;</li>
+<li>Communication time: 5.0e-4 ms per prime in the payload of a message from one node to another (half of the RTT).</li>
+<li>Communication latency: Approx. 15 ms.</li>
+<li>Number of actual primes among candidate primes: 5.6% (mean for $L$ in the range 1.25e7 to 3.2e9). The number of primes is actually decreasing as the limit $L$ increases, but in order to simplify the analysis, a fixed value is used. This leads to an overestimation of the impact of communications. In fact, it is expected that $\lim\limits_{x \to \infty} \frac{\pi(n)}{n} = 0$.</li>
+</ul>
+<p>Using those values, there is approximatively one prime found each 1.1e-4 ms, which makes the communication time five time larger than the computation time. In the light of this result, the third strategy is chosen for analysis and potential implementation, as the first strategy would require approximatively one message for each prime found up to $\sqrt{L}$, and the third one would require far less messages.</p>
+<h3 id="timing-diagram">Timing diagram</h3>
+<p><img alt="Timing diagram" src="/images/timings_strat1.svg" /></p>
+<p>Critical path (highlighted in red in the diagram):</p>
+<ul>
+<li>Send <img alt="[C]" src="/images/dps-flow_data-c.svg" /> messages to processes 1, 2 and 3</li>
+<li>Sieving by process 3</li>
+<li>Receiving <img alt="[D]" src="/images/dps-flow_data-d.svg" /> messages from processes 1, 2 and 3</li>
+</ul>
+<p>From the above diagram, we can derive a speedup formula.</p>
+<ul>
+<li>$t_p$: total processing time (serial solution)</li>
+<li>$t_{ps}$: processing time for the sieving up to $\sqrt{L}$</li>
+<li>$t_{pc}$: processing time for the crossing-out after $\sqrt{L}$ (serial solution)</li>
+<li>$t_l$: communication latency</li>
+<li>$t_r$: time to send the whole list of primes</li>
+</ul>
+<p>$t_{serial} = t_{ps} + t_{pc} = t_p$<br />
+$t_{par} = n \cdot t_l + t_{ps} + \frac{t_{pc}}{n} + t_l + n \frac{t_r}{n} = (n + 1) t_l + t_r + t_{ps} + \frac{t_{pc}}{n}$</p>
+<p>Note that $t_{ps} + \frac{t_{pc}}{n} = \sqrt{t_p} + \frac{t_p - \sqrt{t_p}}{n} = \frac{(n - 1) \sqrt{t_p} + t_{p}}{n}$.<br />
+Then $t_{par} = (n + 1) t_l + t_r + \frac{n - 1}{n} \sqrt{t_p} + \frac{t_p}{n}$.</p>
+<p>Finally, the speedup is<br />
+$$S_p = \frac{t_{serial}}{t_{par}} = \frac{t_p}{t_c + \frac{n - 1}{n} \sqrt{t_p} + \frac{t_p}{n}}$$</p>
+<p>where $t_c = (n + 1) t_l + t_r$, the total communication time including latency.</p>
+<p>The following table shows the expected speedup for numbers up to 1600000000 ($1.6 \times 10^9$) in which there are 79451833 primes. <!-- t_p: 11905, t_l: 15, t_r: 39726 (5e-4 * pi(L)) --></p>
+<table>
+<thead>
+<tr>
+<th>n</th>
+<th>$S_p$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>0.260</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0.278</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0.284</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0.287</td>
+</tr>
+<tr>
+<td>10</td>
+<td>0.289</td>
+</tr>
+<tr>
+<td>12</td>
+<td>0.290</td>
+</tr>
+</tbody>
+</table>
+<p>This shows that even with almost no communication, the strategy is worse than the serial implementation. This is probably due to the final sending of all the primes to a single node, which handles one communication at a time. Switching to a distributed file system might improve the speedup by allowing to take the final sending out of the formula, as distributed file systems are inherently parallel. We can also note that the speedup slightly improves with the number of nodes.</p>
+<p>If we take a step back, we can see that the speedup actually is maximal at 0.293 with 28.0427 CPUs. So using 29 nodes or more will make the speedup decrease as the gain in the computation factors won't compensate for the increasing communications.</p>
+<p><img alt="" src="/images/expected_speedup.png" /></p>
+<h2 id="optimizations">Optimizations</h2>
+<p>The parallel algorithm is pretty much optimal in terms of computations. A small optimization can still be applied: Since the first part of the list of number (up to $\sqrt{L}$) is sieved with the standard, sequential algorithm to find all primes in it, it also can be optimized by sieving only to the square root of its biggest number, i.e. the numbers to process can be reduced to $\sqrt{\sqrt{L}} = \sqrt[4]{L}$.</p>
+<p>With respect to the implementation, several optimizations can be though of.<br />
+If we relax the assumption that any node runs only one thread, we can use several threads in a single process and share the primes found in the first part of the list, which will reduce the overall amount of computations. Memory interactions between two threads should however be studied as concurrent memory accesses for several chunks might limit the benefits of that optimization when caches are involved.<br />
+On the communications side, the problem with the chosen implementation is that there is a huge bottleneck on the master, when it has to receive all primes at the end (which is done sequentially). One optimization could be to have a multi-threaded master, with one thread per slave so it can receive and process several messages at once. But ideally, what one would want is a truly parallel way of storing or processing found primes, which can be enabled with a distributed file system. It would effectively reduce the critical path to the process that has the longest processing and sending time, instead of having to add the time needed by each process to send their primes.<br />
+Finally, in order to address, or at least mitigate memory limitations, a better approach to memory usage should have been considered (see below the comments on the implementation).</p>
+<h2 id="comments-on-the-implementation">Comments on the implementation</h2>
+<p>Once the parallelization strategy was decided, parallelizing the algorithm presented no real challenge in terms of coding.</p>
+<p>Problems occured however because of memory limitations. The parallel algorithm implementation uses two <code>bitset</code> structures (<code>vector</code>-like structures optimized for booleans) which unlike vectors must be provided a size at compile time. For simplicity, the same size is used for both the first part of the list and the chunk, which is not optimal (we need only $\sqrt{L}$ numbers for one of them and the size of the other depends on the number of slaves). Additionally, when sending found primes back to the master, a vector is used to store and send the primes. Using a custom data structure, the memory used for the bitsets could be reused for building the list of primes before sending them, reducing the actually needed memory to only the equivalent of the two bitsets.</p>
+<p>It is also possible to use vectors of booleans instead of bitset, which would solve the problem of oversized bitsets. However tests made using vectors showed that the processing time notably increased, so this solution was not retained as computation time was a bigger concern than the achievable size of the list.</p>
+<h2 id="performances-evaluation">Performances evaluation</h2>
+<p>The table below shows the mean measured execution time for series of 5 executions on varying number of nodes. The effective speedup with respect to the serial implementation is also shown, as well as the predicted and Amdahl's speedups for reference.</p>
+<table>
+<thead>
+<tr>
+<th>n</th>
+<th>Execution time [ms]</th>
+<th>Measured $S_p$</th>
+<th>Predicted $S_p$</th>
+<th>Amdahl's law $S_p$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 (Serial)</td>
+<td>11905.4</td>
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>1 (Parallel)</td>
+<td>35996.38</td>
+<td>0.331</td>
+<td>0.230</td>
+<td>1.000</td>
+</tr>
+<tr>
+<td>2</td>
+<td>19515.78</td>
+<td>0.610</td>
+<td>0.260</td>
+<td>2.000</td>
+</tr>
+<tr>
+<td>4</td>
+<td>13327.40</td>
+<td>0.893</td>
+<td>0.278</td>
+<td>3.999</td>
+</tr>
+<tr>
+<td>6</td>
+<td>12057.18</td>
+<td>0.987</td>
+<td>0.284</td>
+<td>5.999</td>
+</tr>
+<tr>
+<td>8</td>
+<td>11454.46</td>
+<td>1.039</td>
+<td>0.287</td>
+<td>7.997</td>
+</tr>
+<tr>
+<td>10</td>
+<td>10845.70</td>
+<td>1.098</td>
+<td>0.289</td>
+<td>9.996</td>
+</tr>
+<tr>
+<td>12</td>
+<td>10828.62</td>
+<td>1.099</td>
+<td>0.290</td>
+<td>11.993</td>
+</tr>
+</tbody>
+</table>
+<p>We see that the parallel implementation beats the serial version in terms of execution time only when using more than 6 nodes. We also see a discrepancy with the predicted speedup when we compare them side-by-side, but also with respect to the predicted maximal speedup (which is 0.293 using 28 nodes).</p>
+<p>Amdahl's law being an upper bound and not taking communications into account at all, the speedup obtained from that law (almost linear for small numbers of nodes) is not possibly achievable with the implemented algorithm.</p>
+<p><img alt="Speedups comparison" src="/images/speedups.svg" /></p>
+<h2 id="corrected-model">Corrected model</h2>
+<p>The problems with the model used to predict the speedup are mainly due to network issues: It assumes a too simplistic view of the actual network.</p>
+<p>The main problem is that the values measured in order to get some constants for the theoretical analysis are not accurate enough, or even cannot be used as they have been to fit in the model. For instance, the measured network speed is heavily dependent on the number, the size and the temporal distribution of the messages sent to the master.</p>
+<p>The graph below, computed from updated and more rigorous measurements, shows the network speed computed from the time it took to send messages around the network with varying parameters. The setup is the following: A master send a message to all slaves and the latter send it back to the master.</p>
+<p>During the measurements, messages were sent with varying payload sizes and number of concurrent messages. For each series of tests, the network load put on the master was modified by delaying the sending of messages from the slaves. The following load management delays were used:</p>
+<ul>
+<li>None: No load control, all slaves send their message back as soon as they receive it</li>
+<li>Constant: Each slave delay the reply by a given (identical) amount of time</li>
+<li>Random: Each slave delay the reply by a random amount of time</li>
+<li>Distributed: Each slave delay the reply by a controlled amount, which should simulate an uncongested network</li>
+</ul>
+<p>Note that large payloads made the application crash, so only measurements with a reduced number of concurrent messages were done for those payloads.</p>
+<p><img alt="Network speed by payload size" src="/images/netspeed_vs_payload.svg" /><br />
+<em>(The same graph with log scale on the Y-axis can be found in the annex.)</em></p>
+<p>Analyzing the graph, several observations can be made about the network.</p>
+<ol>
+<li>There are many factors that influence the network speed, which are directly related to $t_r$ in the formula for speedup prediction. In facts, all tested factor influenced the speed at some point: payload size, number of concurrent messages and network load. The network load is directly dependent on the number of concurrent messages, but can be influenced by delaying some of them, so we have an independent measure of that factor by means of the "delay" factor, as explained above. Another factor, which was not directly influenced, is the total amount of data transiting through the network, i.e. the sum of the payloads of concurrent messages.</li>
+<li>It is interesting to note that for large payload sizes, if the payload is divided into several messages sent by different nodes, the network transmit them faster than if a single node sends the whole payload.</li>
+<li>DPS does not seem to manage its network load, which is clear by looking at the values for different delays for the same payload size. It is not apparent for small payloads though. Since network load is not managed, buffers might come into play. It follows that creating a model of the network might be hard. Fortunately, in the present case it is almost certain that the sieving algorithm won't behave as if the "distributed" delay was used, but lies in a model somewhere between the "constant" and "random" ones, i.e. all slaves performing the sieving finishes and send their primes at almost the same time.</li>
+</ol>
+<p>Furthermore, the actual network model we need to build for the parallel sieve cannot be build by following one of the clear tendencies in the graph: Since we are interested in a varying number of nodes doing the sieve, we need to look at values for 1, 2, 4, ... concurrent messages and at the same time picking payload sizes of resp. 80000000, 40000000, 20000000, and so on. It could be possible to create a model by finding a function that uses all those parameters, but the model will become complicated.</p>
+<p>Another point not covered by the speedup prediction model is the fact that messages have to be prepared before being able to be sent over the network: Prime numbers are encoded in a bitset during the sieve, which is sub-optimal in terms of size. So they must be <em>packed</em>, i.e. stored in a structure more fit for networked communications (in the current implementation: a list of integers). This packing takes some time, which should also appear in the model. The packing time $t_{pac}$ has been measured to be 40 ns / prime, which amounts to approx. 3178 ms for $\pi(1.6e9)$ primes.</p>
+<p>Furthermore, the assumption that the time needed to sieve the first part of the list up to $\sqrt{L}$ is $\sqrt{t_p}$ was wrong. The amount of time hitting numbers in the first part of the list has been measured to be less than 0.0001% of the total sieving time, which means that it is negligible.</p>
+<p>Finally, the round trip time used to predict the speedup might not be accurate. RTT values between 5 and 80 ms have been observed. The new value retained for the latency $t_l$ is 9 ms, which is the median value over a series of tests.</p>
+<p>So the corrected model would be:</p>
+<p>$$S_p = \frac{t_{serial}}{t_{par}} = \frac{t_p}{(n+1) t_l + N_t(n) + \frac{t_p + t_{pac}}{n}}$$</p>
+<p>where $N_t(n)$ is a model of the network that predicts the transmission time for $n$ messages of size $\frac{\pi(L)}{n}$.</p>
+<p>As it is pretty hard to come up with a complete model for the network based on the network speed as a function of payload size and number of concurrent messages, a simpler function will be used, which is specific for $L = 1600000000$ and $n = 1..12$, and gives pretty accurate results. The chosen model is based on observations of actual transfer times and is given by:</p>
+<p>$$N_t(n) = t_r / \log_{10}(10n)$$</p>
+<p>where $t_r = 20622 \text{ ms}$ is the time needed to transfer the whole list of primes in a single message, taken from new and more accurate measures. Note that due to testing conditions, an error of 2 seconds is likely, and this error alters enough the predicted speedup, which can be either above or under the measured speedup depending on the direction of the error.</p>
+<p>The speedup values with the new formula are:</p>
+<table>
+<thead>
+<tr>
+<th>n</th>
+<th>Execution time [ms]</th>
+<th>Measured $S_p$</th>
+<th>First model $S_p$</th>
+<th>New model $S_p$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>35996.38</td>
+<td>0.331</td>
+<td>0.230</td>
+<td>0.333</td>
+</tr>
+<tr>
+<td>2</td>
+<td>19515.78</td>
+<td>0.610</td>
+<td>0.260</td>
+<td>0.508</td>
+</tr>
+<tr>
+<td>4</td>
+<td>13327.40</td>
+<td>0.893</td>
+<td>0.278</td>
+<td>0.713</td>
+</tr>
+<tr>
+<td>6</td>
+<td>12057.18</td>
+<td>0.987</td>
+<td>0.284</td>
+<td>0.840</td>
+</tr>
+<tr>
+<td>8</td>
+<td>11454.46</td>
+<td>1.039</td>
+<td>0.287</td>
+<td>0.930</td>
+</tr>
+<tr>
+<td>10</td>
+<td>10845.70</td>
+<td>1.098</td>
+<td>0.289</td>
+<td>0.999</td>
+</tr>
+<tr>
+<td>12</td>
+<td>10828.62</td>
+<td>1.099</td>
+<td>0.290</td>
+<td>1.054</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Speedups comparison" src="/images/speedups_newmodel.svg" /></p>
+<p>The new speedup model is much more accurate than the first one as it takes into account a more complex network model. The difference that we can still see between the predicted speedup and the measured one comes from the fact that the network model is still not very accurate. However, creating an accurate network model would require lab conditions, with a dedicated network where most of its elements are tested and controlled. The actual testing conditions were pretty far from lab conditions in that a public computer room and the public network were used.</p>
+<p>The new model is nevertheless accurate enough to show a clear similarity between the curves of its predicted speedup and the measured one, not only in shape but also in values.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>DPS is a neat attempt to get rid of errors in parallelized code by providing stronger guarantees than MPI does. However, it also introduces some rigidity that might hinder performances as it would require some tricks to implement communication channels that might be simpler to implement on MPI. One example is that the split operation requires the corresponding merge operation to receive exactly the same number of messages that the split operation sent. This prevents the easy implementation of simple streaming protocols, and might load the network more than required. Since the network is generally the bottleneck of a parallelized application (it was in this case), using DPS might not be always the best choice over MPI for some kinds of problems.</p>
+<p>The parallelization strategy tried to cope with the network bottleneck by reducing communications to the strict minimum. However, as extended investigations of the network showed afterwards, having more balanced communication might have been a better choice even at the cost of a little more communications.</p>
+<blockquote class="funquote cite doge" style="margin-left: 3em; margin-bottom: 1em; background-color: white !important;">
+  <p style="text-align: left;">much report</p>
+  <p style="text-align: right;">so amaze</p>
+  <p style="text-align: center;">WOW!</p>
+  <cite>Doge</cite>
+</blockquote>
+
+<h2 id="annex">Annex</h2>
+<h3 id="achievable-speedup-graphs">Achievable speedup: Graphs</h3>
+<p><img alt="" src="/images/achievable-speedup/1000p1000000L.svg" /><br />
+<img alt="" src="/images/achievable-speedup/10p1000L.svg" /><br />
+<img alt="" src="/images/achievable-speedup/100p100L.svg" /><br />
+<img alt="" src="/images/achievable-speedup/10p100000L.svg" /></p>
+<h3 id="corrected-model-additional-graphs">Corrected model: Additional graphs</h3>
+<p><img alt="Network speed by payload size (log Y scale)" src="/images/netspeed_vs_payload_logy.svg" /></p>
+<!-- Footnodes -->
+
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:algoComplexity">
+<p><a href="http://en.wikipedia.org/wiki/Sieve_of_Eratosthenes#Algorithm_complexity">Sieve of Eratosthenes on Wikipedia</a>&#160;<a class="footnote-backref" href="#fnref:algoComplexity" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:primeCountingFunction">
+<p><a href="http://en.wikipedia.org/wiki/Prime_number#Number_of_prime_numbers_below_a_given_number">Prime number on Wikipedia</a>&#160;<a class="footnote-backref" href="#fnref:primeCountingFunction" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div></body></html>
