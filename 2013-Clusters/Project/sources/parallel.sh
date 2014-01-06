@@ -2,7 +2,7 @@ MACHINEFILE='hosts_up_winmpi.txt'
 OUTFILE='result_parallel.dat'
 
 TRIALS=5
-MAX=1600000000
+MAX=800000000
 SLAVES="1 2 4 6 8 10 12"
 
 rm -f "$OUTFILE"
