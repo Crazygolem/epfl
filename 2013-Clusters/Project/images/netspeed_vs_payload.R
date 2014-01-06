@@ -46,16 +46,21 @@ myplot <- function(df, outname, log = 'x') {
 
   # Labels near points
   textxy(df$payload_size, df$netspeed, df$conc_messages,
+    col=as.numeric(df$delay),
     cex=0.8,
     offset=1.2
   )
 
-  # Legend
+  # Legends
   legend('topleft',
     levels(df$delay),
     pch=as.numeric(levels(factor(as.numeric(df$delay)))),
     col=as.numeric(levels(factor(as.numeric(df$delay)))),
-    title='Load delay'
+    title='Delay'
+  )
+  legend('bottomright',
+    '# of concurrent messages',
+    pch='n'
   )
 
   dev.off()
@@ -64,3 +69,8 @@ myplot <- function(df, outname, log = 'x') {
 # Last filtering and plotting
 myplot(d, 'netspeed_vs_payload')
 myplot(d, 'netspeed_vs_payload_logy', 'xy')
+
+# Keeping values for 4 & 10 concurrent messages, and 'constant' & 'random' delay
+a <- d[(d$conc_messages == 4 | d$conc_messages == 10) & (d$delay == 'constant' | d$delay == 'random'),]
+a$delay <- factor(a$delay) # Reset factors to remove unused ones
+myplot(a, 'netspeed_vs_payload_restr_logy', 'xy')

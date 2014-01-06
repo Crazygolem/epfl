@@ -96,13 +96,13 @@
 	</g>
 	<g id="gnuplot_plot_2a" ><title>gnuplot_plot_2a</title>
 <g style="fill:none; color:green; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
-	<path stroke='green'  d='M89.1,228.5 L106.2,171.1 L140.5,113.7 L174.9,93.2 L209.2,82.9 L243.5,70.6 L277.8,70.6  h0.01'/>	<use xlink:href='#gpPt1' transform='translate(89.1,228.5) scale(4.50)' color='green'/>
+	<path stroke='green'  d='M89.1,228.3 L106.2,171.1 L140.5,113.0 L174.9,93.8 L209.2,83.1 L243.5,71.0 L277.8,70.8  h0.01'/>	<use xlink:href='#gpPt1' transform='translate(89.1,228.3) scale(4.50)' color='green'/>
 	<use xlink:href='#gpPt1' transform='translate(106.2,171.1) scale(4.50)' color='green'/>
-	<use xlink:href='#gpPt1' transform='translate(140.5,113.7) scale(4.50)' color='green'/>
-	<use xlink:href='#gpPt1' transform='translate(174.9,93.2) scale(4.50)' color='green'/>
-	<use xlink:href='#gpPt1' transform='translate(209.2,82.9) scale(4.50)' color='green'/>
-	<use xlink:href='#gpPt1' transform='translate(243.5,70.6) scale(4.50)' color='green'/>
-	<use xlink:href='#gpPt1' transform='translate(277.8,70.6) scale(4.50)' color='green'/>
+	<use xlink:href='#gpPt1' transform='translate(140.5,113.0) scale(4.50)' color='green'/>
+	<use xlink:href='#gpPt1' transform='translate(174.9,93.8) scale(4.50)' color='green'/>
+	<use xlink:href='#gpPt1' transform='translate(209.2,83.1) scale(4.50)' color='green'/>
+	<use xlink:href='#gpPt1' transform='translate(243.5,71.0) scale(4.50)' color='green'/>
+	<use xlink:href='#gpPt1' transform='translate(277.8,70.8) scale(4.50)' color='green'/>
 </g>
 	</g>
 <g style="fill:none; color:black; stroke:currentColor; stroke-width:1.00; stroke-linecap:butt; stroke-linejoin:miter">
@@ -192,13 +192,13 @@
 	<g transform="translate(453.9,346.5)" style="stroke:none; fill:black; font-family:Arial; font-size:12.00pt; text-anchor:start">
 		<text>Amdahl's</text>
 	</g>
-	<path  d='M403.4,342.0 L445.6,342.0 M401.4,234.6 L419.2,219.3 L454.8,188.5 L490.4,157.7 L526.0,127.0 L561.6,96.2 
+	<path  d='M403.4,342.0 L445.6,342.0 M401.4,234.6 L419.2,219.3 L454.8,188.5 L490.4,157.8 L526.0,127.0 L561.6,96.3 
 		L597.2,65.6  h0.01'/>	<use xlink:href='#gpPt2' transform='translate(401.4,234.6) scale(4.50)'/>
 	<use xlink:href='#gpPt2' transform='translate(419.2,219.3) scale(4.50)'/>
 	<use xlink:href='#gpPt2' transform='translate(454.8,188.5) scale(4.50)'/>
-	<use xlink:href='#gpPt2' transform='translate(490.4,157.7) scale(4.50)'/>
+	<use xlink:href='#gpPt2' transform='translate(490.4,157.8) scale(4.50)'/>
 	<use xlink:href='#gpPt2' transform='translate(526.0,127.0) scale(4.50)'/>
-	<use xlink:href='#gpPt2' transform='translate(561.6,96.2) scale(4.50)'/>
+	<use xlink:href='#gpPt2' transform='translate(561.6,96.3) scale(4.50)'/>
 	<use xlink:href='#gpPt2' transform='translate(597.2,65.6) scale(4.50)'/>
 	<use xlink:href='#gpPt2' transform='translate(424.5,342.0) scale(4.50)'/>
 </g>
